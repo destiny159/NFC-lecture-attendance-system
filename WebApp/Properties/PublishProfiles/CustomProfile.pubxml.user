@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+This file is used by the publish/package process of your Web project. You can customize the behavior of this process
+by editing this MSBuild file. In order to learn more about this please visit https://go.microsoft.com/fwlink/?LinkID=208121. 
+-->
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <TimeStampOfAssociatedLegacyPublishXmlFile />
+    <EncryptedPassword>AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAkb5D7ScbO0uXb3jiRsgaRQAAAAACAAAAAAAQZgAAAAEAACAAAADkG3vKZNgl/YiNJDDLVWG90sl+cZELgSuZsQYGNGXsPQAAAAAOgAAAAAIAACAAAAC5gGH4/hoO5MsPoF11+VLHnT3AXpSOp3XUpjV+LGHFMyAAAACIlDDJEcrvLXJB0arFUfu17dlok29Pi2kcQZtZanumiUAAAAAimTUXNwnnEAV66bXPhODTj+RcpIWkz3CaA7O3OmAz7W7gjkx1D3eH664zsM8Iw5YBegpZ4kJs7RaJMz4oRrd7</EncryptedPassword>
+    <_PublishTargetUrl>ftp://192.168.0.104/wwwroot</_PublishTargetUrl>
+  </PropertyGroup>
+  <ItemGroup>
+    <File Include="appsettings.Development.json">
+      <publishTime>02/28/2019 20:29:54</publishTime>
+    </File>
+    <File Include="appsettings.json">
+      <publishTime>02/28/2019 20:29:54</publishTime>
+    </File>
+    <File Include="AspNetCoreVueStarter.deps.json">
+      <publishTime>02/28/2019 22:28:57</publishTime>
+    </File>
+    <File Include="AspNetCoreVueStarter.dll">
+      <publishTime>02/28/2019 22:26:30</publishTime>
+    </File>
+    <File Include="AspNetCoreVueStarter.pdb">
+      <publishTime>02/28/2019 22:26:30</publishTime>
+    </File>
+    <File Include="AspNetCoreVueStarter.runtimeconfig.json">
+      <publishTime>02/28/2019 22:28:57</publishTime>
+    </File>
+    <File Include="AspNetCoreVueStarter.Views.dll">
+      <publishTime>02/28/2019 22:26:31</publishTime>
+    </File>
+    <File Include="AspNetCoreVueStarter.Views.pdb">
+      <publishTime>02/28/2019 22:26:31</publishTime>
+    </File>
+    <File Include="ClientApp/dist/css/app.52d55d4e.css">
+      <publishTime>02/28/2019 22:28:55</publishTime>
+    </File>
+    <File Include="ClientApp/dist/css/chunk-vendors.f6552608.css">
+      <publishTime>02/28/2019 22:28:55</publishTime>
+    </File>
+    <File Include="ClientApp/dist/favicon.ico">
+      <publishTime>02/28/2019 22:28:55</publishTime>
+    </File>
+    <File Include="ClientApp/dist/img/icons/android-chrome-192x192.png">
+      <publishTime>02/28/2019 22:28:55</publishTime>
+    </File>
+    <File Include="ClientApp/dist/img/icons/android-chrome-512x512.png">
+      <publishTime>02/28/2019 22:28:55</publishTime>
+    </File>
+    <File Include="ClientApp/dist/img/icons/apple-touch-icon-120x120.png">
+      <publishTime>02/28/2019 22:28:55</publishTime>
+    </File>
+    <File Include="ClientApp/dist/img/icons/apple-touch-icon-152x152.png">
+      <publishTime>02/28/2019 22:28:55</publishTime>
+    </File>
+    <File Include="ClientApp/dist/img/icons/apple-touch-icon-180x180.png">
+      <publishTime>02/28/2019 22:28:55</publishTime>
+    </File>
+    <File Include="ClientApp/dist/img/icons/apple-touch-icon-60x60.png">
+      <publishTime>02/28/2019 22:28:55</publishTime>
+    </File>
+    <File Include="ClientApp/dist/img/icons/apple-touch-icon-76x76.png">
+      <publishTime>02/28/2019 22:28:55</publishTime>
+    </File>
+    <File Include="ClientApp/dist/img/icons/apple-touch-icon.png">
+      <publishTime>02/28/2019 22:28:55</publishTime>
+    </File>
+    <File Include="ClientApp/dist/img/icons/favicon-16x16.png">
+      <publishTime>02/28/2019 22:28:55</publishTime>
+    </File>
+    <File Include="ClientApp/dist/img/icons/favicon-32x32.png">
+      <publishTime>02/28/2019 22:28:55</publishTime>
+    </File>
+    <File Include="ClientApp/dist/img/icons/msapplication-icon-144x144.png">
+      <publishTime>02/28/2019 22:28:55</publishTime>
+    </File>
+    <File Include="ClientApp/dist/img/icons/mstile-150x150.png">
+      <publishTime>02/28/2019 22:28:55</publishTime>
+    </File>
+    <File Include="ClientApp/dist/img/icons/safari-pinned-tab.svg">
+      <publishTime>02/28/2019 22:28:55</publishTime>
+    </File>
+    <File Include="ClientApp/dist/img/logo.978a7dfc.png">
+      <publishTime>02/28/2019 22:28:55</publishTime>
+    </File>
+    <File Include="ClientApp/dist/index.html">
+      <publishTime>02/28/2019 22:28:55</publishTime>
+    </File>
+    <File Include="ClientApp/dist/js/app.57f4b203.js">
+      <publishTime>02/28/2019 22:28:55</publishTime>
+    </File>
+    <File Include="ClientApp/dist/js/app.57f4b203.js.map">
+      <publishTime>02/28/2019 22:28:55</publishTime>
+    </File>
+    <File Include="ClientApp/dist/js/chunk-vendors.dc53f8cc.js">
+      <publishTime>02/28/2019 22:28:55</publishTime>
+    </File>
+    <File Include="ClientApp/dist/js/chunk-vendors.dc53f8cc.js.map">
+      <publishTime>02/28/2019 22:28:55</publishTime>
+    </File>
+    <File Include="ClientApp/dist/js/counter.06817caf.js">
+      <publishTime>02/28/2019 22:28:55</publishTime>
+    </File>
+    <File Include="ClientApp/dist/js/counter.06817caf.js.map">
+      <publishTime>02/28/2019 22:28:55</publishTime>
+    </File>
+    <File Include="ClientApp/dist/js/fetch-data.3727067e.js">
+      <publishTime>02/28/2019 22:28:55</publishTime>
+    </File>
+    <File Include="ClientApp/dist/js/fetch-data.3727067e.js.map">
+      <publishTime>02/28/2019 22:28:55</publishTime>
+    </File>
+    <File Include="ClientApp/dist/manifest.json">
+      <publishTime>02/28/2019 22:28:55</publishTime>
+    </File>
+    <File Include="ClientApp/dist/precache-manifest.52f9df64366917fe1587798c6f346e1f.js">
+      <publishTime>02/28/2019 22:28:55</publishTime>
+    </File>
+    <File Include="ClientApp/dist/robots.txt">
+      <publishTime>02/28/2019 22:28:55</publishTime>
+    </File>
+    <File Include="ClientApp/dist/service-worker.js">
+      <publishTime>02/28/2019 22:28:55</publishTime>
+    </File>
+    <File Include="tslint.json">
+      <publishTime>02/28/2019 20:29:55</publishTime>
+    </File>
+    <File Include="VueCliMiddleware.dll">
+      <publishTime>01/07/2019 22:28:18</publishTime>
+    </File>
+    <File Include="web.config">
+      <publishTime>02/28/2019 22:28:57</publishTime>
+    </File>
+  </ItemGroup>
+</Project>
