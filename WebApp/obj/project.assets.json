@@ -12146,11 +12146,11 @@
   "project": {
     "version": "1.0.4",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Vilius\\source\\repos\\vueTemplateTest\\AspNetCoreVueStarter.csproj",
+      "projectUniqueName": "C:\\Users\\Vilius\\Documents\\GitHub\\NFC-lecture-attendance-system\\WebApp\\AspNetCoreVueStarter.csproj",
       "projectName": "AspNetCoreVueStarter",
-      "projectPath": "C:\\Users\\Vilius\\source\\repos\\vueTemplateTest\\AspNetCoreVueStarter.csproj",
+      "projectPath": "C:\\Users\\Vilius\\Documents\\GitHub\\NFC-lecture-attendance-system\\WebApp\\AspNetCoreVueStarter.csproj",
       "packagesPath": "C:\\Users\\Vilius\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Vilius\\source\\repos\\vueTemplateTest\\obj\\",
+      "outputPath": "C:\\Users\\Vilius\\Documents\\GitHub\\NFC-lecture-attendance-system\\WebApp\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
