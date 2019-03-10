@@ -1,28 +1,19 @@
 #include <Arduino.h>
-
 #include <Wire.h>
 #include <SPI.h>
 #include <Adafruit_PN532.h>
+#include <WiFi.h>
+#include "time.h"
+
+#include "defines.h"
+#include "prototypes.h"
 
 #define DEBUG
 
-// SPI Pins
-#define PN532_SCK  (18)
-#define PN532_MOSI (23)
-#define PN532_SS   (5)
-#define PN532_MISO (19)
-
-// Speaker pin to notify about succesfull scan
-#define SPEAKER     (25)
 
 // NFC reader object
 Adafruit_PN532 nfc(PN532_SCK, PN532_MISO, PN532_MOSI, PN532_SS);
 
-
-// Function prototypes
-void setupSerial();
-void setupNFCReader();
-void beep(int count, int duration);
 
 void setup(void) {
   // Setup pins
