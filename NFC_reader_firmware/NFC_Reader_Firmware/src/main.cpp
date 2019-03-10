@@ -4,9 +4,10 @@
 #include <Adafruit_PN532.h>
 #include <WiFi.h>
 #include "time.h"
-
+#include <HTTPClient.h>
 #include "defines.h"
 #include "prototypes.h"
+#include <ArduinoJson.h>
 
 #define DEBUG
 
@@ -41,7 +42,72 @@ void loop(void) {
   // 'uid' will be populated with the UID, and uidLength will indicate
   // if the uid is 4 bytes (Mifare Classic) or 7 bytes (Mifare Ultralight)
   success = nfc.readPassiveTargetID(PN532_MIFARE_ISO14443A, &uid[0], &uidLength);
-  
+  parserNFCResults(success, uid, uidLength);
+
+  if((WiFi.status() == WL_CONNECTED) && success) 
+  {
+    String json;
+    uint32_t cardUid = uid[0] + (uid[1] << 8) + (uid[2] << 16) + (uid[3] << 24);
+    time_t timestamp = getCurrentTimestamp();
+    StaticJsonDocument<200> doc;
+    doc["uid"] = cardUid;
+    doc["time"] = timestamp;
+    serializeJson(doc, json);
+    serializeJsonPretty(doc, Serial);
+    Serial.println();
+    sendPOSTRequest(json);
+  }
+}
+
+
+// shows time in unix formtat
+time_t getCurrentTimestamp()
+{
+  struct tm timeinfo;
+  if(!getLocalTime(&timeinfo)){
+    Serial.println("Failed to obtain time");
+    return 0;
+  }
+  return mktime(&timeinfo);
+}
+
+// Sends HTTP POST request to API endpoint
+bool sendPOSTRequest(String messageJson)
+{
+  HTTPClient http;
+
+  // Configure traget server url
+  Serial.print("[HTTP] begin...\n");
+  http.begin(API_ENDPOINT); 
+  http.addHeader("Content-Type", "application/json");
+
+  // start connection and send HTTP header
+  Serial.print("[HTTP] POST...\n");
+  int httpCode = http.POST(messageJson);
+
+  // HttpCode will be negative on error
+  if(httpCode > 0) {
+    // HTTP header has been send and Server response header has been handled
+    Serial.printf("[HTTP] POST... code: %d\n", httpCode);
+
+    // file found at server
+    if(httpCode == HTTP_CODE_OK) {
+        String payload = http.getString();
+        Serial.println(payload);
+    }
+    return true;
+  } 
+  else 
+  {
+    Serial.printf("[HTTP] GET... failed, error: %s\n", http.errorToString(httpCode).c_str());
+    return false;
+  }
+  http.end();
+}
+
+// Prints out results of NFC module
+uint parserNFCResults(bool success, uint8_t (&uid)[7], uint8_t uidLength)
+{
   if (success) {
     #ifdef DEBUG
     Serial.print("UID Length: ");Serial.print(uidLength, DEC);Serial.println(" bytes");
@@ -55,15 +121,19 @@ void loop(void) {
 	// Wait 0.5 second before continuing
   printLocalTime();
   beep(1,50);
-  delay(400);
+  delay(100);
+  
+  return 1;
   }
   else
   {
     // PN532 probably timed out waiting for a card
     Serial.println("Timed out waiting for a card");
     beep(3,250);
+    return 0;
   }
 }
+
 
 // Inicialises and gets time
 void configureTime()
@@ -82,7 +152,6 @@ void printLocalTime()
     return;
   }
   Serial.println(&timeinfo, "%A, %B %d %Y %H:%M:%S");
-  Serial.println(mktime(&timeinfo)); // shows time in unix formtat
 }
 
 
