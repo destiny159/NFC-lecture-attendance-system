@@ -1,2 +1,3 @@
-**/bin/**
-**/obj/**
+**WebApp/bin/**
+**WebApp/obj/**
+**WebApp/obj/Debug/**
