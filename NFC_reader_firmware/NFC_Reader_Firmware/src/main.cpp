@@ -11,7 +11,7 @@
 #define DEBUG
 
 
-// NFC reader object
+// NFC reader object, uses pins defined in defines.h
 Adafruit_PN532 nfc(PN532_SCK, PN532_MISO, PN532_MOSI, PN532_SS);
 
 
@@ -19,8 +19,12 @@ void setup(void) {
   // Setup pins
   pinMode(SPEAKER, OUTPUT);
   
+  // Setups peripherals
   setupSerial();
   setupNFCReader();
+  wifiConnect();
+
+  // Setup time
 
   // Nofify about finished setup
   beep(2, 100);
@@ -58,6 +62,16 @@ void loop(void) {
   }
 }
 
+void wifiConnect()
+{
+  Serial.printf("Connecting to %s ", SSID);
+  WiFi.begin(SSID, PASSWD);
+  while (WiFi.status() != WL_CONNECTED) {
+      delay(250);
+      Serial.print(".");
+  }
+  Serial.println("\nCONNECTED");
+}
 
 void setupNFCReader()
 {
@@ -74,7 +88,7 @@ void setupNFCReader()
   // Got ok data, print it out!
   #ifdef DEBUG
   Serial.print("Found chip PN5"); Serial.println((versiondata>>24) & 0xFF, HEX); 
-  Serial.print("Firmware ver. "); Serial.print((versiondata>>16) & 0xFF, DEC); 
+  Serial.print("PN532 Firmware ver. "); Serial.print((versiondata>>16) & 0xFF, DEC); 
   Serial.print('.'); Serial.println((versiondata>>8) & 0xFF, DEC);
   #endif
 
