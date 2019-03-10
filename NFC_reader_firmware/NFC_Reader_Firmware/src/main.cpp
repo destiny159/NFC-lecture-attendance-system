@@ -23,6 +23,7 @@ void setup(void) {
   setupSerial();
   setupNFCReader();
   wifiConnect();
+  configureTime();
 
   // Setup time
 
@@ -30,10 +31,11 @@ void setup(void) {
   beep(2, 100);
 }
 
+
 void loop(void) {
   boolean success;
   uint8_t uid[] = { 0, 0, 0, 0, 0, 0, 0 };	// Buffer to store the returned UID
-  uint8_t uidLength;				// Length of the UID (4 or 7 bytes depending on ISO14443A card type)
+  uint8_t uidLength;				                // Length of the UID (4 or 7 bytes depending on ISO14443A card type)
   
   // Wait for an ISO14443A type cards
   // 'uid' will be populated with the UID, and uidLength will indicate
@@ -51,6 +53,7 @@ void loop(void) {
     Serial.println("");
     #endif
 	// Wait 0.5 second before continuing
+  printLocalTime();
   beep(1,50);
   delay(400);
   }
@@ -61,6 +64,27 @@ void loop(void) {
     beep(3,250);
   }
 }
+
+// Inicialises and gets time
+void configureTime()
+{
+  configTime(GTM_OFFSET, GTM_DAY_OFFSET, NTP_SERVER);
+  printLocalTime();
+}
+
+
+// Print time in human readable format
+void printLocalTime()
+{
+  struct tm timeinfo;
+  if(!getLocalTime(&timeinfo)){
+    Serial.println("Failed to obtain time");
+    return;
+  }
+  Serial.println(&timeinfo, "%A, %B %d %Y %H:%M:%S");
+  Serial.println(mktime(&timeinfo)); // shows time in unix formtat
+}
+
 
 void wifiConnect()
 {
@@ -73,6 +97,8 @@ void wifiConnect()
   Serial.println("\nCONNECTED");
 }
 
+
+// Sets up and configures nfc reader module
 void setupNFCReader()
 {
   // Setup NFC module
@@ -111,6 +137,7 @@ void setupSerial()
 }
 
 
+// Beep for notification purposes
 void beep(int count, int duration)
 {
   for(int i = 0; i < count; i++)
