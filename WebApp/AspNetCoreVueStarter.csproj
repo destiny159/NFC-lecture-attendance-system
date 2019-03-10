@@ -7,10 +7,10 @@
     <IsPackable>false</IsPackable>
     <SpaRoot>ClientApp\</SpaRoot>
     <DefaultItemExcludes>$(DefaultItemExcludes);$(SpaRoot)node_modules\**</DefaultItemExcludes>
-    <Authors>Software Ateliers</Authors>
-    <Company>Software Ateliers</Company>
-    <Description>ASP.NET Core + Vue.js starter project</Description>
-    <Copyright>MIT 2019 Software Ateliers</Copyright>
+    <Authors>R.A.V.E.D</Authors>
+    <Company>R.A.V.E.D</Company>
+    <Description>NFC attendance system</Description>
+    <Copyright>R.A.V.E.D 2019</Copyright>
     <AssemblyName>AspNetCoreVueStarter</AssemblyName>
     <RootNamespace>AspNetCoreVueStarter</RootNamespace>
     <Version>1.0.4</Version>
@@ -21,8 +21,10 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.App" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.SpaServices.Extensions" Version="2.2.0" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.0.2105168" />
+    <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="2.2.0" />
     <PackageReference Include="VueCliMiddleware" Version="2.2.0" />
   </ItemGroup>
 

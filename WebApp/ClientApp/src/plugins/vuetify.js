@@ -11,7 +11,8 @@ import {
   VToolbar,
   VDataTable,
   VProgressLinear,
-  transitions
+  transitions,
+  VCalendar
 } from 'vuetify'
 import 'vuetify/src/stylus/app.styl'
 
@@ -28,6 +29,7 @@ Vue.use(Vuetify, {
     VDataTable,
     VProgressLinear,
     transitions,
+    VCalendar
   },
   theme: {
     primary: '#1976D2',

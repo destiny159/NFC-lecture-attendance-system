@@ -26,5 +26,10 @@ export default new Router({
       name: 'fetch-data',
       component: () => import(/* webpackChunkName: "fetch-data" */ './views/FetchData.vue'),
     },
+    {
+      path: '/timetable',
+      name: 'timetable',
+      component: () => import(/* webpackChunkName: "fetch-data" */ './views/Timetable.vue'),
+    },
   ],
 });

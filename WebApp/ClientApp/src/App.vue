@@ -31,7 +31,7 @@
     </v-content>
 
     <v-footer app>
-      <span>&nbsp;Software Ateliers&nbsp;&copy;&nbsp;2019</span>
+      <span>&nbsp;R.A.V.E.D&nbsp;&copy;&nbsp;2019</span>
     </v-footer>
 
   </v-app>
@@ -57,7 +57,7 @@ export default class App extends Vue {
     { title: 'Reality check', icon: 'done_outline', link: '/reality' },
     { title: 'DeadlineIsNear', icon: 'timer', link: '/time' },
     { title: 'Access', icon: 'access_timer', link: '/access' },
-    { title: 'Shortee', icon: 'warning', link: '/warning' }
+    { title: 'Timetable', icon: 'warning', link: '/timetable' },
   ];
 }
 </script>

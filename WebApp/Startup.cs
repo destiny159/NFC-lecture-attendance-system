@@ -1,9 +1,17 @@
+using System.Net.Mime;
+using System.Data;
+using System.Data.Common;
+using System;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using VueCliMiddleware;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Pomelo.EntityFrameworkCore.MySql;
+using Microsoft.EntityFrameworkCore;
+using AspNetCoreVueStarter.Data;
 
 namespace AspNetCoreVueStarter
 {
@@ -26,6 +34,7 @@ namespace AspNetCoreVueStarter
             {
                 configuration.RootPath = "ClientApp/dist";
             });
+            services.AddDbContext<ApplicationDbContext>(options => options.UseMySql(Configuration.GetConnectionString("DefaultConnection")));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
