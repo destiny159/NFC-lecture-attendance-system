@@ -20,41 +20,17 @@ Adafruit_PN532 nfc(PN532_SCK, PN532_MISO, PN532_MOSI, PN532_SS);
 
 
 // Function prototypes
+void setupSerial();
+void setupNFCReader();
 void beep(int count, int duration);
 
 void setup(void) {
   // Setup pins
   pinMode(SPEAKER, OUTPUT);
-  // Setup serial port
-  Serial.begin(115200);
-  Serial.println("Startup!");
-
-  // Setup NFC module
-  nfc.begin();
-
-  // Get info
-  uint32_t versiondata = nfc.getFirmwareVersion();
-  if (! versiondata) {
-    Serial.print("Didn't find PN53x board");
-    while (1); // halt
-  }
   
-  // Got ok data, print it out!
-  #ifdef DEBUG
-  Serial.print("Found chip PN5"); Serial.println((versiondata>>24) & 0xFF, HEX); 
-  Serial.print("Firmware ver. "); Serial.print((versiondata>>16) & 0xFF, DEC); 
-  Serial.print('.'); Serial.println((versiondata>>8) & 0xFF, DEC);
-  #endif
+  setupSerial();
+  setupNFCReader();
 
-  // Set the max number of retry attempts to read from a card
-  // This prevents us from waiting forever for a card, which is
-  // the default behaviour of the PN532.
-  nfc.setPassiveActivationRetries(0xFF);
-  
-  // configure board to read RFID cards
-  nfc.SAMConfig();
-  
-  Serial.println("Waiting for an RFID card");
   // Nofify about finished setup
   beep(2, 100);
 }
@@ -90,6 +66,45 @@ void loop(void) {
     beep(3,250);
   }
 }
+
+
+void setupNFCReader()
+{
+  // Setup NFC module
+  nfc.begin();
+
+  // Get info
+  uint32_t versiondata = nfc.getFirmwareVersion();
+  if (! versiondata) {
+    Serial.print("Didn't find PN53x board");
+    while (1); // halt
+  }
+  
+  // Got ok data, print it out!
+  #ifdef DEBUG
+  Serial.print("Found chip PN5"); Serial.println((versiondata>>24) & 0xFF, HEX); 
+  Serial.print("Firmware ver. "); Serial.print((versiondata>>16) & 0xFF, DEC); 
+  Serial.print('.'); Serial.println((versiondata>>8) & 0xFF, DEC);
+  #endif
+
+  // Set the max number of retry attempts to read from a card
+  // This prevents us from waiting forever for a card, which is
+  // the default behaviour of the PN532.
+  nfc.setPassiveActivationRetries(0xFF);
+  
+  // configure board to read RFID cards
+  nfc.SAMConfig();
+  
+  Serial.println("Waiting for an RFID card");
+}
+
+
+void setupSerial()
+{
+  Serial.begin(115200);
+  Serial.println("Startup!");
+}
+
 
 void beep(int count, int duration)
 {
