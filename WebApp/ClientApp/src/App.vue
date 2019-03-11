@@ -51,7 +51,8 @@ export default class App extends Vue {
   private right: boolean = true;
   private title: string = 'NFC lankomumo sistema';
   private items = [
-    { title: 'Home', icon: 'home', link: '/' },
+    { title: 'Login', icon: 'account_circle', link: '/' },
+    { title: 'Home', icon: 'home', link: '/home' },
     { title: 'Counter', icon: 'touch_app', link: '/counter' },
     { title: 'Fetch data', icon: 'get_app', link: '/fetch-data' },
     { title: 'Reality check', icon: 'done_outline', link: '/reality' },
