@@ -9,21 +9,32 @@ namespace AspNetCoreVueStarter.Controllers
     [Route("api/[controller]")]
     public class SampleDataController : Controller
     {
+        private List<WeatherForecast> enumWeather = new List<WeatherForecast>();
         private static string[] Summaries = new[]
         {
             "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
         };
 
+
         [HttpGet("[action]")]
         public IEnumerable<WeatherForecast> WeatherForecasts()
         {
+
             var rng = new Random();
-            return Enumerable.Range(1, 255).Select(index => new WeatherForecast
+            enumWeather.Add(new WeatherForecast
             {
-                DateFormatted = DateTime.Now.AddDays(index).ToString("d"),
+                DateFormatted = DateTime.Now.AddDays(enumWeather.Count).ToString("d"),
                 TemperatureC = rng.Next(-20, 55),
                 Summary = Summaries[rng.Next(Summaries.Length)]
             });
+            enumWeather.Add(new WeatherForecast
+            {
+                DateFormatted = DateTime.Now.AddDays(enumWeather.Count).ToString("d"),
+                TemperatureC = rng.Next(-20, 55),
+                Summary = Summaries[rng.Next(Summaries.Length)]
+            });
+            var testEnum = enumWeather.Select(weatehr => weatehr);
+            return testEnum;
         }
 
         public class WeatherForecast

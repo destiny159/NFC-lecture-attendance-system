@@ -1,50 +1,113 @@
 #include <Arduino.h>
-
 #include <Wire.h>
 #include <SPI.h>
 #include <Adafruit_PN532.h>
+#include <WiFi.h>
+#include "time.h"
+#include <HTTPClient.h>
+#include "defines.h"
+#include "prototypes.h"
+#include <ArduinoJson.h>
 
 #define DEBUG
 
-// SPI Pins
-#define PN532_SCK  (18)
-#define PN532_MOSI (23)
-#define PN532_SS   (5)
-#define PN532_MISO (19)
 
-// Speaker pin to notify about succesfull scan
-#define SPEAKER     (25)
-
-// NFC reader object
+// NFC reader object, uses pins defined in defines.h
 Adafruit_PN532 nfc(PN532_SCK, PN532_MISO, PN532_MOSI, PN532_SS);
 
-
-// Function prototypes
-void setupSerial();
-void setupNFCReader();
-void beep(int count, int duration);
 
 void setup(void) {
   // Setup pins
   pinMode(SPEAKER, OUTPUT);
   
+  // Setups peripherals
   setupSerial();
   setupNFCReader();
+  wifiConnect();
+  configureTime();
+
+  // Setup time
 
   // Nofify about finished setup
   beep(2, 100);
 }
 
+
 void loop(void) {
   boolean success;
   uint8_t uid[] = { 0, 0, 0, 0, 0, 0, 0 };	// Buffer to store the returned UID
-  uint8_t uidLength;				// Length of the UID (4 or 7 bytes depending on ISO14443A card type)
+  uint8_t uidLength;				                // Length of the UID (4 or 7 bytes depending on ISO14443A card type)
   
   // Wait for an ISO14443A type cards
   // 'uid' will be populated with the UID, and uidLength will indicate
   // if the uid is 4 bytes (Mifare Classic) or 7 bytes (Mifare Ultralight)
   success = nfc.readPassiveTargetID(PN532_MIFARE_ISO14443A, &uid[0], &uidLength);
-  
+  parserNFCResults(success, uid, uidLength);
+
+  if((WiFi.status() == WL_CONNECTED) && success) 
+  {
+    String json;
+    uint32_t cardUid = uid[0] + (uid[1] << 8) + (uid[2] << 16) + (uid[3] << 24);
+    time_t timestamp = getCurrentTimestamp();
+    StaticJsonDocument<200> doc;
+    doc["uid"] = cardUid;
+    doc["time"] = timestamp;
+    serializeJson(doc, json);
+    serializeJsonPretty(doc, Serial);
+    Serial.println();
+    sendPOSTRequest(json);
+  }
+}
+
+
+// shows time in unix formtat
+time_t getCurrentTimestamp()
+{
+  struct tm timeinfo;
+  if(!getLocalTime(&timeinfo)){
+    Serial.println("Failed to obtain time");
+    return 0;
+  }
+  return mktime(&timeinfo);
+}
+
+// Sends HTTP POST request to API endpoint
+bool sendPOSTRequest(String messageJson)
+{
+  HTTPClient http;
+
+  // Configure traget server url
+  Serial.print("[HTTP] begin...\n");
+  http.begin(API_ENDPOINT); 
+  http.addHeader("Content-Type", "application/json");
+
+  // start connection and send HTTP header
+  Serial.print("[HTTP] POST...\n");
+  int httpCode = http.POST(messageJson);
+
+  // HttpCode will be negative on error
+  if(httpCode > 0) {
+    // HTTP header has been send and Server response header has been handled
+    Serial.printf("[HTTP] POST... code: %d\n", httpCode);
+
+    // file found at server
+    if(httpCode == HTTP_CODE_OK) {
+        String payload = http.getString();
+        Serial.println(payload);
+    }
+    return true;
+  } 
+  else 
+  {
+    Serial.printf("[HTTP] GET... failed, error: %s\n", http.errorToString(httpCode).c_str());
+    return false;
+  }
+  http.end();
+}
+
+// Prints out results of NFC module
+uint parserNFCResults(bool success, uint8_t (&uid)[7], uint8_t uidLength)
+{
   if (success) {
     #ifdef DEBUG
     Serial.print("UID Length: ");Serial.print(uidLength, DEC);Serial.println(" bytes");
@@ -56,18 +119,55 @@ void loop(void) {
     Serial.println("");
     #endif
 	// Wait 0.5 second before continuing
+  printLocalTime();
   beep(1,50);
-  delay(400);
+  delay(100);
+  
+  return 1;
   }
   else
   {
     // PN532 probably timed out waiting for a card
     Serial.println("Timed out waiting for a card");
     beep(3,250);
+    return 0;
   }
 }
 
 
+// Inicialises and gets time
+void configureTime()
+{
+  configTime(GTM_OFFSET, GTM_DAY_OFFSET, NTP_SERVER);
+  printLocalTime();
+}
+
+
+// Print time in human readable format
+void printLocalTime()
+{
+  struct tm timeinfo;
+  if(!getLocalTime(&timeinfo)){
+    Serial.println("Failed to obtain time");
+    return;
+  }
+  Serial.println(&timeinfo, "%A, %B %d %Y %H:%M:%S");
+}
+
+
+void wifiConnect()
+{
+  Serial.printf("Connecting to %s ", SSID);
+  WiFi.begin(SSID, PASSWD);
+  while (WiFi.status() != WL_CONNECTED) {
+      delay(250);
+      Serial.print(".");
+  }
+  Serial.println("\nCONNECTED");
+}
+
+
+// Sets up and configures nfc reader module
 void setupNFCReader()
 {
   // Setup NFC module
@@ -83,7 +183,7 @@ void setupNFCReader()
   // Got ok data, print it out!
   #ifdef DEBUG
   Serial.print("Found chip PN5"); Serial.println((versiondata>>24) & 0xFF, HEX); 
-  Serial.print("Firmware ver. "); Serial.print((versiondata>>16) & 0xFF, DEC); 
+  Serial.print("PN532 Firmware ver. "); Serial.print((versiondata>>16) & 0xFF, DEC); 
   Serial.print('.'); Serial.println((versiondata>>8) & 0xFF, DEC);
   #endif
 
@@ -106,6 +206,7 @@ void setupSerial()
 }
 
 
+// Beep for notification purposes
 void beep(int count, int duration)
 {
   for(int i = 0; i < count; i++)
