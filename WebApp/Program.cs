@@ -7,6 +7,7 @@ using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using System.Net;
 
 namespace AspNetCoreVueStarter
 {
@@ -19,6 +20,15 @@ namespace AspNetCoreVueStarter
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
+            // .UseKestrel(options =>
+            // {
+            //     options.Listen(IPAddress.Loopback, 5000);
+            //     options.Listen(IPAddress.Loopback, 5001, listenOptions =>
+            //     {
+            //         listenOptions.UseHttps("localhost.pfx", "password");
+            //     });
+            // })
+                .UseUrls("https://*:4430")
                 .UseStartup<Startup>();
     }
 }
