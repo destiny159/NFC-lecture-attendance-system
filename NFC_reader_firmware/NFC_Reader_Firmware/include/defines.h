@@ -17,5 +17,6 @@
 #define GTM_DAY_OFFSET  0
 
 // API settings
-#define API_ENDPOINT    "http://ptsv2.com/t/je1wo-1552248829/post"
+// #define API_ENDPOINT    "http://ptsv2.com/t/je1wo-1552248829/post"
 //#define API_ENDPOINT  "http://www.mocky.io/v2/5c85934f3300002c36f2bb84"
+#define API_ENDPOINT    "http://192.168.0.101:4430/api/nfcscan/postscan"

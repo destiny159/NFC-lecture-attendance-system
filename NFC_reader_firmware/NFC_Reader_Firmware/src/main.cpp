@@ -50,8 +50,11 @@ void loop(void) {
     uint32_t cardUid = uid[0] + (uid[1] << 8) + (uid[2] << 16) + (uid[3] << 24);
     time_t timestamp = getCurrentTimestamp();
     StaticJsonDocument<200> doc;
-    doc["uid"] = cardUid;
-    doc["time"] = timestamp;
+    char timeString[32] = "ABXDSFS";
+    printLocalTime(timeString);
+    doc["UID"] = cardUid;
+    doc["TimeStamp"] = timestamp;
+    doc["DateTime"] = timeString;
     serializeJson(doc, json);
     serializeJsonPretty(doc, Serial);
     Serial.println();
@@ -59,6 +62,16 @@ void loop(void) {
   }
 }
 
+void charToStringL(const char S[], String &D)
+{
+    byte at = 0;
+    const char *p = S;
+    D = "";
+
+    while (*p++) {
+      D.concat(S[at++]);
+      }
+}
 
 // shows time in unix formtat
 time_t getCurrentTimestamp()
@@ -91,15 +104,21 @@ bool sendPOSTRequest(String messageJson)
     Serial.printf("[HTTP] POST... code: %d\n", httpCode);
 
     // file found at server
-    if(httpCode == HTTP_CODE_OK) {
+    if(httpCode == HTTP_CODE_OK || httpCode == HTTP_CODE_CREATED) {
         String payload = http.getString();
         Serial.println(payload);
     }
+    else
+    {
+      beep(3, 50);
+    }
+    
     return true;
   } 
   else 
   {
     Serial.printf("[HTTP] GET... failed, error: %s\n", http.errorToString(httpCode).c_str());
+    beep(4, 50);
     return false;
   }
   http.end();
@@ -119,7 +138,6 @@ uint parserNFCResults(bool success, uint8_t (&uid)[7], uint8_t uidLength)
     Serial.println("");
     #endif
 	// Wait 0.5 second before continuing
-  printLocalTime();
   beep(1,50);
   delay(100);
   
@@ -139,19 +157,22 @@ uint parserNFCResults(bool success, uint8_t (&uid)[7], uint8_t uidLength)
 void configureTime()
 {
   configTime(GTM_OFFSET, GTM_DAY_OFFSET, NTP_SERVER);
-  printLocalTime();
+  //printLocalTime();
 }
 
 
 // Print time in human readable format
-void printLocalTime()
+bool printLocalTime(char s[])
 {
   struct tm timeinfo;
   if(!getLocalTime(&timeinfo)){
     Serial.println("Failed to obtain time");
-    return;
+    return false;
   }
-  Serial.println(&timeinfo, "%A, %B %d %Y %H:%M:%S");
+  //Serial.println(&timeinfo, "%A, %B %d %Y %H:%M:%S");
+  strftime(s,32,"%A, %B %d %Y %H:%M:%S", &timeinfo);
+  //Serial.println(timeStr);
+  return true;
 }
 
 
