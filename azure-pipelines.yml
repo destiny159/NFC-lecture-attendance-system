@@ -17,5 +17,5 @@ variables:
 steps:
 - script: cd WebApp
   displayName: 'Into folder)'
-- script: dotnet build --configuration $(buildConfiguration)
+- script: dotnet publish -c Release -r linux-arm --self-contained false
   displayName: 'dotnet build $(buildConfiguration)'
