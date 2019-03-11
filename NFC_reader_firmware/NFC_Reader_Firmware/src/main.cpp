@@ -14,7 +14,9 @@
 
 // NFC reader object, uses pins defined in defines.h
 Adafruit_PN532 nfc(PN532_SCK, PN532_MISO, PN532_MOSI, PN532_SS);
-
+uint64_t start;
+uint64_t startHearbeat;
+bool againLine = false;
 
 void setup(void) {
   // Setup pins
@@ -27,22 +29,32 @@ void setup(void) {
   configureTime();
 
   // Setup time
-
+  start = millis();
+  startHearbeat = millis();
   // Nofify about finished setup
   beep(2, 100);
 }
 
-
 void loop(void) {
-  boolean success;
+  boolean success = false;
   uint8_t uid[] = { 0, 0, 0, 0, 0, 0, 0 };	// Buffer to store the returned UID
   uint8_t uidLength;				                // Length of the UID (4 or 7 bytes depending on ISO14443A card type)
   
   // Wait for an ISO14443A type cards
   // 'uid' will be populated with the UID, and uidLength will indicate
   // if the uid is 4 bytes (Mifare Classic) or 7 bytes (Mifare Ultralight)
-  success = nfc.readPassiveTargetID(PN532_MIFARE_ISO14443A, &uid[0], &uidLength);
-  parserNFCResults(success, uid, uidLength);
+  if(millis() - startHearbeat >= 100)
+  {
+    startHearbeat = millis();
+    printHearBeat();
+  }
+  if(millis() - start >= 1000)
+  {
+    againLine = true;
+    start = millis();
+    success = nfc.readPassiveTargetID(PN532_MIFARE_ISO14443A, &uid[0], &uidLength);
+    parserNFCResults(success, uid, uidLength);
+  }
 
   if((WiFi.status() == WL_CONNECTED) && success) 
   {
@@ -61,6 +73,14 @@ void loop(void) {
     sendPOSTRequest(json);
   }
 }
+
+
+void printHearBeat()
+{
+  if(againLine) { Serial.println(); againLine == false;}
+  Serial.print(".");
+}
+
 
 void charToStringL(const char S[], String &D)
 {
@@ -92,6 +112,7 @@ bool sendPOSTRequest(String messageJson)
   // Configure traget server url
   Serial.print("[HTTP] begin...\n");
   http.begin(API_ENDPOINT); 
+  http.setTimeout(500);
   http.addHeader("Content-Type", "application/json");
 
   // start connection and send HTTP header
@@ -118,7 +139,7 @@ bool sendPOSTRequest(String messageJson)
   else 
   {
     Serial.printf("[HTTP] GET... failed, error: %s\n", http.errorToString(httpCode).c_str());
-    beep(4, 50);
+    beep(4, 100);
     return false;
   }
   http.end();

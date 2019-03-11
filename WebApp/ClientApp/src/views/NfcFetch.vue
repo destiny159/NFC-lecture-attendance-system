@@ -14,9 +14,9 @@
           >
             <v-progress-linear v-slot:progress color="blue" indeterminate></v-progress-linear>
             <template v-slot:items="props">
-              <td>{{ props.item.dateTime }}</td>
-              <td>{{ props.item.timeStamp }}</td>
               <td>{{ props.item.uid }}</td>
+              <td>{{ props.item.timeStamp }}</td>
+              <td>{{ props.item.dateTime }}</td>
             </template>
           </v-data-table>
 
@@ -35,8 +35,8 @@ export default class FetchDataView extends Vue {
   private loading: boolean = true;
   private scans: NfcScan[] = [];
   private headers = [
-    { text: 'TimeStamp', value: 'timeStamp' },
     { text: 'UID', value: 'uid' },
+    { text: 'TimeStamp', value: 'timeStamp' },
     { text: 'DateTime', value: 'dateTime' },
   ];
 
