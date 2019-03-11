@@ -38,8 +38,9 @@ namespace NFCSystem
             });
             services.AddDbContext<ApplicationDbContext>(options => options.UseMySql(Configuration.GetConnectionString("DefaultConnection")));
             services.AddIdentity<ApplicationUser, IdentityRole>();
-            services.AddDbContext<NFCScanContext>(opt => opt.UseInMemoryDatabase("NFCList"));
+            services.AddDbContext<NFCScanContext>(options => options.UseMySql(Configuration.GetConnectionString("DefaultConnection"))); 
         }
+
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)

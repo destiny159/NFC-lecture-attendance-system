@@ -30,6 +30,13 @@ namespace NFCSystem
             // })
                 //.UseUrls("https://*:4430")
                 .UseUrls("http://*:4430")
+                .ConfigureLogging((hostingContext, logging) =>
+                {
+                    logging.AddConfiguration(hostingContext.Configuration.GetSection("Logging"));
+                    logging.AddConsole();
+                    logging.AddDebug();
+                    logging.AddEventSourceLogger();
+                })
                 .UseStartup<Startup>();
     }
 }

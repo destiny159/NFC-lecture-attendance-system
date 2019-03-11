@@ -27,6 +27,11 @@ export default new Router({
       component: () => import(/* webpackChunkName: "fetch-data" */ './views/FetchData.vue'),
     },
     {
+      path: '/nfc-fetch',
+      name: 'nfc-fetch',
+      component: () => import(/* webpackChunkName: "fetch-data" */ './views/NfcFetch.vue'),
+    },
+    {
       path: '/timetable',
       name: 'timetable',
       component: () => import(/* webpackChunkName: "fetch-data" */ './views/Timetable.vue'),

@@ -49,6 +49,17 @@ namespace NFCSystem.Controllers
         }
 
         return todoItem;
+        }
+
+        // POST: api/Todo
+        [HttpPost("[action]")]
+        public async Task<ActionResult<NFCScan>> PostScan(NFCScan item)
+        {
+            _context.NFCScans.Add(item);
+            await _context.SaveChangesAsync();
+            //System.Diagnostics.Debug.WriteLine(item.ToString());
+
+            return CreatedAtAction(nameof(GetScan), new { id = item.UID }, item);
         }   
     }
 }

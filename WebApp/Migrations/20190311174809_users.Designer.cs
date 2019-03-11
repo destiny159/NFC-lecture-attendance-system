@@ -9,8 +9,8 @@ using NFCSystem.Data;
 namespace NFCSystem.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20190311140838_CreateIdentityModels")]
-    partial class CreateIdentityModels
+    [Migration("20190311174809_users")]
+    partial class users
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

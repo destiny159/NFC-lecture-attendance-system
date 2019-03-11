@@ -54,7 +54,7 @@ export default class App extends Vue {
     { title: 'Home', icon: 'home', link: '/' },
     { title: 'Counter', icon: 'touch_app', link: '/counter' },
     { title: 'Fetch data', icon: 'get_app', link: '/fetch-data' },
-    { title: 'Reality check', icon: 'done_outline', link: '/reality' },
+    { title: 'NFC Scans', icon: 'nfc', link: '/nfc-fetch' },
     { title: 'DeadlineIsNear', icon: 'timer', link: '/time' },
     { title: 'Access', icon: 'access_timer', link: '/access' },
     { title: 'Timetable', icon: 'warning', link: '/timetable' },
