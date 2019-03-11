@@ -4,8 +4,9 @@ using System.Text;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
+using NFCSystem.Models;
 
-namespace AspNetCoreVueStarter.Data
+namespace NFCSystem.Data
 {
     public class ApplicationDbContext : IdentityDbContext
     {
@@ -18,11 +19,11 @@ namespace AspNetCoreVueStarter.Data
             // Customize the ASP.NET Identity model and override the defaults if needed.
             // For example, you can rename the ASP.NET Identity table names and more.
             // Add your customizations after calling base.OnModelCreating(builder);
-                builder.Entity<IdentityUser>(entity => { 
+                builder.Entity<ApplicationUser>(entity => { 
                 entity.Property(m => m.Email).HasMaxLength(127); 
                 entity.Property(m => m.NormalizedEmail).HasMaxLength(127); 
                 entity.Property(m => m.NormalizedUserName).HasMaxLength(127); 
-                entity.Property(m => m.UserName).HasMaxLength(127); 
+                entity.Property(m => m.UserName).HasMaxLength(127);
                 });
             
                 builder.Entity<IdentityRole>(entity => { 

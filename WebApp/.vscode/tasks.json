@@ -7,7 +7,7 @@
             "type": "process",
             "args": [
                 "build",
-                "${workspaceFolder}/AspNetCoreVueStarter.csproj"
+                "${workspaceFolder}/NFCSystem.csproj"
             ],
             "problemMatcher": "$msCompile"
         }

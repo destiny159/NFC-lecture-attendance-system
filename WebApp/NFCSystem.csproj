@@ -11,8 +11,8 @@
     <Company>R.A.V.E.D</Company>
     <Description>NFC attendance system</Description>
     <Copyright>R.A.V.E.D 2019</Copyright>
-    <AssemblyName>AspNetCoreVueStarter</AssemblyName>
-    <RootNamespace>AspNetCoreVueStarter</RootNamespace>
+    <AssemblyName>NFCSystem</AssemblyName>
+    <RootNamespace>NFCSystem</RootNamespace>
     <Version>1.0.4</Version>
     <AssemblyVersion>1.0.4.0</AssemblyVersion>
     <FileVersion>1.0.4.0</FileVersion>
@@ -24,6 +24,7 @@
     <PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.Server.Kestrel.Https" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.SpaServices.Extensions" Version="2.2.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="2.2.2" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.0.2105168" />
     <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="2.2.0" />
     <PackageReference Include="VueCliMiddleware" Version="2.2.0" />

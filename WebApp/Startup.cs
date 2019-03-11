@@ -11,9 +11,11 @@ using VueCliMiddleware;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Pomelo.EntityFrameworkCore.MySql;
 using Microsoft.EntityFrameworkCore;
-using AspNetCoreVueStarter.Data;
+using NFCSystem.Data;
+using Microsoft.AspNetCore.Identity;
+using NFCSystem.Models;
 
-namespace AspNetCoreVueStarter
+namespace NFCSystem
 {
     public class Startup
     {
@@ -35,6 +37,8 @@ namespace AspNetCoreVueStarter
                 configuration.RootPath = "ClientApp/dist";
             });
             services.AddDbContext<ApplicationDbContext>(options => options.UseMySql(Configuration.GetConnectionString("DefaultConnection")));
+            services.AddIdentity<ApplicationUser, IdentityRole>();
+            services.AddDbContext<NFCScanContext>(opt => opt.UseInMemoryDatabase("NFCList"));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

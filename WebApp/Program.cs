@@ -9,7 +9,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using System.Net;
 
-namespace AspNetCoreVueStarter
+namespace NFCSystem
 {
     public class Program
     {
@@ -28,7 +28,8 @@ namespace AspNetCoreVueStarter
             //         listenOptions.UseHttps("localhost.pfx", "password");
             //     });
             // })
-                .UseUrls("https://*:4430")
+                //.UseUrls("https://*:4430")
+                .UseUrls("http://*:4430")
                 .UseStartup<Startup>();
     }
 }
