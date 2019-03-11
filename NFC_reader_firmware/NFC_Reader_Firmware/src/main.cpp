@@ -1,8 +1,9 @@
-#include <Arduino.h>
+#include <Arduino.h> // Arduino framework library
 #include <Wire.h>
 #include <SPI.h>
-#include <Adafruit_PN532.h>
+#include <Adafruit_PN532.h> 
 #include <WiFi.h>
+#include "esp_wpa2.h" //wpa2 library for connections to Enterprise networks
 #include "time.h"
 #include <HTTPClient.h>
 #include "defines.h"
@@ -10,6 +11,7 @@
 #include <ArduinoJson.h>
 
 #define DEBUG
+#define EDUROAM
 
 
 // NFC reader object, uses pins defined in defines.h
@@ -77,7 +79,7 @@ void loop(void) {
 
 void printHearBeat()
 {
-  if(againLine) { Serial.println(); againLine == false;}
+  if(againLine) { Serial.println(); againLine = false;}
   Serial.print(".");
 }
 
@@ -112,7 +114,7 @@ bool sendPOSTRequest(String messageJson)
   // Configure traget server url
   Serial.print("[HTTP] begin...\n");
   http.begin(API_ENDPOINT); 
-  http.setTimeout(500);
+  http.setTimeout(5000);
   http.addHeader("Content-Type", "application/json");
 
   // start connection and send HTTP header
@@ -199,13 +201,27 @@ bool printLocalTime(char s[])
 
 void wifiConnect()
 {
-  Serial.printf("Connecting to %s ", SSID);
-  WiFi.begin(SSID, PASSWD);
+  WiFi.disconnect(true);  //disconnect form wifi to set new wifi connection
+  WiFi.mode(WIFI_STA); //init wifi mode
+  Serial.printf("Connecting to %s ", EAP_SSID);
+
+  #ifdef EDUROAM
+    //esp_wifi_sta_wpa2_ent_set_identity((uint8_t *)EAP_IDENTITY, strlen(EAP_IDENTITY)); //provide identity
+    esp_wifi_sta_wpa2_ent_set_username((uint8_t *)EAP_IDENTITY, strlen(EAP_IDENTITY)); //provide username --> identity and username is same
+    esp_wifi_sta_wpa2_ent_set_password((uint8_t *)EAP_PASSWORD, strlen(EAP_PASSWORD)); //provide password
+    esp_wpa2_config_t config = WPA2_CONFIG_INIT_DEFAULT(); //set config settings to default
+    esp_wifi_sta_wpa2_ent_enable(&config); //set config settings to enable function
+    WiFi.begin(EAP_SSID);
+  #else
+    WiFi.begin(SSID, PASSWD);
+  #endif // EDUROAM
+
   while (WiFi.status() != WL_CONNECTED) {
       delay(250);
       Serial.print(".");
   }
   Serial.println("\nCONNECTED");
+  Serial.println(WiFi.localIP());
 }
 
 

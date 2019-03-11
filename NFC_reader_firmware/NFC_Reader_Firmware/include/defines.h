@@ -11,6 +11,13 @@
 #define SSID            "DESKTOP-A4GI4HB"
 #define PASSWD          "bigbang123"
 
+// Eduroam wifi settings
+#define EAP_ANONYMOUS_IDENTITY  "anonymous@ktu.lt"
+#define EAP_IDENTITY "vilval6@ktu.lt" //if connecting from another corporation, use identity@organisation.domain in Eduroam 
+#define EAP_PASSWORD "BigBang032" //your Eduroam password
+#define EAP_SSID  "eduroam" // Eduroam SSID
+#define EAP_HOST  "" //external server domain for HTTP connection after authentification
+
 // NTP server settings
 #define NTP_SERVER      "europe.pool.ntp.org"
 #define GTM_OFFSET      7200
