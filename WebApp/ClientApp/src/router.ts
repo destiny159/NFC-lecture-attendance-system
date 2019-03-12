@@ -37,6 +37,16 @@ export default new Router({
       component: () => import(/* webpackChunkName: "fetch-data" */ './views/Timetable.vue'),
     },
     {
+      path: '/dialog',
+      name: 'dialog',
+      component: () => import(/* webpackChunkName: "fetch-data" */ './views/DialogTest.vue'),
+    },
+    {
+      path: '/login',
+      name: 'login',
+      component: () => import(/* webpackChunkName: "fetch-data" */ './views/LoginMock.vue'),
+    },
+    {
       path: '*',
       redirect: '/',
     },
