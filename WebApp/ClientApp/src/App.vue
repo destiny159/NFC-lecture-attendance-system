@@ -24,6 +24,7 @@
       </v-btn>
       <v-toolbar-title v-text="title"></v-toolbar-title>
       <v-spacer></v-spacer>
+      <DialogTest right/>
     </v-toolbar>
 
     <v-content>
@@ -38,12 +39,15 @@
 </template>
 
 <script lang="ts">
-import HelloWorld from './components/HelloWorld.vue';
 import { Component, Vue } from 'vue-property-decorator';
+import DialogTest from './views/DialogTest.vue'; // @ is an alias to /src
 
 @Component({
-  components: { HelloWorld },
+  components: {
+    DialogTest,
+  },
 })
+
 export default class App extends Vue {
   private clipped: boolean = true;
   private drawer: boolean = true;
@@ -55,10 +59,25 @@ export default class App extends Vue {
     { title: 'Home', icon: 'home', link: '/home' },
     { title: 'Counter', icon: 'touch_app', link: '/counter' },
     { title: 'Fetch data', icon: 'get_app', link: '/fetch-data' },
-    { title: 'Reality check', icon: 'done_outline', link: '/reality' },
-    { title: 'DeadlineIsNear', icon: 'timer', link: '/time' },
-    { title: 'Access', icon: 'access_timer', link: '/access' },
+    { title: 'NFC Scans', icon: 'nfc', link: '/nfc-fetch' },
+    { title: 'DeadlineIsNear', icon: 'timer', link: '/login' },
+    { title: 'Access', icon: 'access_timer', link: '/dialog' },
     { title: 'Timetable', icon: 'warning', link: '/timetable' },
   ];
 }
 </script>
+
+<style lang="css">
+main.v-content {
+  width: 100vw;
+  height: calc(100vh - 64px);
+  flex-direction: column;
+  overflow: auto;
+  margin-top: 64px;
+  padding-top: 0 !important;
+}
+html {
+  overflow: hidden;
+}
+</style>
+

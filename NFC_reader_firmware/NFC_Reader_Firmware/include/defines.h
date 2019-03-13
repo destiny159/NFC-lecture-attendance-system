@@ -11,11 +11,19 @@
 #define SSID            "DESKTOP-A4GI4HB"
 #define PASSWD          "bigbang123"
 
+// Eduroam wifi settings
+#define EAP_ANONYMOUS_IDENTITY  "anonymous@ktu.lt"
+#define EAP_IDENTITY "vilval6@ktu.lt" //if connecting from another corporation, use identity@organisation.domain in Eduroam 
+#define EAP_PASSWORD "BigBang032" //your Eduroam password
+#define EAP_SSID  "eduroam" // Eduroam SSID
+#define EAP_HOST  "" //external server domain for HTTP connection after authentification
+
 // NTP server settings
 #define NTP_SERVER      "europe.pool.ntp.org"
 #define GTM_OFFSET      7200
 #define GTM_DAY_OFFSET  0
 
 // API settings
-#define API_ENDPOINT    "http://ptsv2.com/t/je1wo-1552248829/post"
-//#define API_ENDPOINT  "http://www.mocky.io/v2/5c85934f3300002c36f2bb84"
+// #define API_ENDPOINT    "http://ptsv2.com/t/je1wo-1552248829/post"
+#define API_ENDPOINT  "http://lankomumas.duckdns.org:4430:/api/nfcscan/postscan"
+//#define API_ENDPOINT    "http://192.168.0.101:4430/api/nfcscan/postscan"
