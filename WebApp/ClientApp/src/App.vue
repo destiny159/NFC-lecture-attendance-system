@@ -40,6 +40,7 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
+import { loginMain } from './components/login/login-main';
 import DialogTest from './views/DialogTest.vue'; // @ is an alias to /src
 
 @Component({

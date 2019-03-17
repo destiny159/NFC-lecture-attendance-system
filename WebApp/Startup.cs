@@ -14,6 +14,13 @@ using Microsoft.EntityFrameworkCore;
 using NFCSystem.Data;
 using Microsoft.AspNetCore.Identity;
 using NFCSystem.Models;
+using System.Text;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 
 namespace NFCSystem
 {
@@ -37,7 +44,37 @@ namespace NFCSystem
                 configuration.RootPath = "ClientApp/dist";
             });
             services.AddDbContext<ApplicationDbContext>(options => options.UseMySql(Configuration.GetConnectionString("DefaultConnection")));
-            services.AddIdentity<ApplicationUser, IdentityRole>();
+            
+            services.AddIdentity<ApplicationUser, IdentityRole>(
+                    option =>
+                    {
+                        option.Password.RequireDigit = true;
+                        option.Password.RequireLowercase = true;
+                        option.Password.RequireNonAlphanumeric = true;
+                        option.Password.RequireUppercase = true;
+                        option.Password.RequiredLength = 6;
+                        option.Password.RequiredUniqueChars = 1;
+                    }
+                ).AddEntityFrameworkStores<ApplicationDbContext>()
+                .AddDefaultTokenProviders();
+
+            services.AddAuthentication(option => {
+                option.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                option.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                option.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+            }).AddJwtBearer(options => {
+                options.SaveToken = true;
+                options.RequireHttpsMetadata = true;
+                options.TokenValidationParameters = new TokenValidationParameters()
+                {
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidAudience = Configuration["Jwt:Site"],
+                    ValidIssuer = Configuration["Jwt:Site"],
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Jwt:SigningKey"]))
+                };
+            });
+
             services.AddDbContext<NFCScanContext>(options => options.UseMySql(Configuration.GetConnectionString("DefaultConnection")));
 
             services.Configure<IdentityOptions>(options =>
