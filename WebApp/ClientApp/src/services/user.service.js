@@ -94,8 +94,8 @@ function handleResponse(response) {
                 location.reload(true);
             }
 
-            const error = (data && data.message) || response.statusText;
-            return Promise.reject(error);
+            const returnError = (data && data.message) || response.statusText;
+            return Promise.reject(returnError);
         }
 
         return data;

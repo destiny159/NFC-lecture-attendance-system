@@ -1,6 +1,6 @@
 <template>
-      <v-dialog v-model="dialog" persistent max-width="600px">
-        <template v-slot:activator="{ on }">
+      <v-dialog v-model="dialog" persistent max-width="600px">   
+        <template v-slot:activator="{ on }">    
           <v-btn color="primary" dark v-on="on">Prisijungti</v-btn>
         </template>
         <v-card class="elevation-12">
@@ -59,7 +59,7 @@ import { userService } from '../services';
         submitted: false,
         loading: false,
         returnUrl: '',
-        error: ''
+        returnError: '',
       }
     },
     created () {
@@ -86,8 +86,8 @@ import { userService } from '../services';
                 router.push(this.returnUrl);
                 this.dialog = false;
               },
-              error => {
-                  this.error = error;
+              returnError => {
+                  this.returnError = returnError;
                   this.loading = false;
               }
           );

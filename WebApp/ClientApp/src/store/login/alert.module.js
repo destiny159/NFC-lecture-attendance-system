@@ -7,7 +7,7 @@ const actions = {
     success({ commit }, message) {
         commit("success", message);
     },
-    error({ commit }, message) {
+    returnError({ commit }, message) {
         commit("error", message);
     },
     clear({ commit }, message) {
@@ -20,7 +20,7 @@ const mutations = {
         state.type = "alert-success";
         state.message = message;
     },
-    error(state, message) {
+    returnError(state, message) {
         state.type = "alert-danger";
         state.message = message;
     },

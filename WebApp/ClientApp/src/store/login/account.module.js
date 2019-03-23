@@ -16,9 +16,9 @@ const actions = {
                     commit("loginSuccess", user);
                     router.push("/home");
                 },
-                error => {
-                    commit("loginFailure", error);
-                    dispatch("alert/error", error, { root: true });
+                returnError => {
+                    commit("loginFailure", returnError);
+                    dispatch("alert/returnError", returnError, { root: true });
                 },
             );
     },
@@ -39,9 +39,9 @@ const actions = {
                         dispatch("alert/success", "Registration successful", { root: true });
                     });
                 },
-                error => {
-                    commit("registerFailure", error);
-                    dispatch("alert/error", error, { root: true });
+                returnError => {
+                    commit("registerFailure", returnError);
+                    dispatch("alert/returnError", returnError, { root: true });
                 },
             );
     },
@@ -70,7 +70,7 @@ const mutations = {
     registerSuccess(state, user) {
         state.status = {};
     },
-    registerFailure(state, error) {
+    registerFailure(state, returnError) {
         state.status = {};
     },
 };

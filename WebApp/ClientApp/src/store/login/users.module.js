@@ -11,7 +11,7 @@ const actions = {
         userService.getAll()
             .then(
                 users => commit("getAllSuccess", users),
-                error => commit("getAllFailure", error),
+                returnError => commit("getAllFailure", returnError),
             );
     },
 
@@ -21,7 +21,7 @@ const actions = {
         userService.delete(id)
             .then(
                 user => commit("deleteSuccess", id),
-                error => commit("deleteSuccess", { id, error: error.toString() }),
+                returnError => commit("deleteSuccess", { id, returnError: returnError.toString() }),
             );
     },
 };
@@ -33,8 +33,8 @@ const mutations = {
     getAllSuccess(state, users) {
         state.all = { items: users };
     },
-    getAllFailure(state, error) {
-        state.all = { error };
+    getAllFailure(state, returnError) {
+        state.all = { returnError };
     },
     deleteRequest(state, id) {
         // add 'deleting:true' property to user being deleted
@@ -48,14 +48,14 @@ const mutations = {
         // remove deleted user from state
         state.all.items = state.all.items.filter(user => user.id !== id);
     },
-    deleteFailure(state, { id, error }) {
+    deleteFailure(state, { id, returnError }) {
         // remove 'deleting:true' property and add 'deleteError:[error]' property to user
         state.all.items = state.items.map(user => {
             if (user.id === id) {
                 // make copy of user without 'deleting:true' property
                 const { deleting, ...userCopy } = user;
                 // return copy of user with 'deleteError:[error]' property
-                return { ...userCopy, deleteError: error };
+                return { ...userCopy, deleteError: returnError };
             }
 
             return user;

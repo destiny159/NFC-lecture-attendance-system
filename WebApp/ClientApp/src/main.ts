@@ -9,10 +9,7 @@ import './registerServiceWorker';
 
 Vue.config.productionTip = false;
 
-// setup fake backend
 // @ts-ignore
-// import { configureFakeBackend } from './components/login/fake-backend.js';
-// configureFakeBackend();
 
 new Vue({
   router,
