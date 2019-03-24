@@ -31,7 +31,7 @@
                 </v-card-text>
                 <v-card-actions>
                   <v-spacer></v-spacer>
-                  <v-btn color="red" @click="dialog = false">Uždaryti</v-btn>
+                  <v-btn color="red" class="white--text" @click="dialog = false">Uždaryti</v-btn>
                    <div class="form-group">
                      <button class="btn btn-primary">
                       <v-btn color="primary" @click="dialog = false">Prisijungti</v-btn>
