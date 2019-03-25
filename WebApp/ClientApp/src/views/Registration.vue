@@ -64,6 +64,16 @@
                   ></v-text-field>-->
                   <!--<div v-show="submitted && !uid" class="invalid-feedback">Įveskite UID!</div></-->
                   <v-text-field 
+                    class="form-control" :class="{ 'is-invalid': submitted && !studentCode }" 
+                    v-model="studentCode"
+                    :error-messages="studentCodeErrors"
+                    required
+                    prepend-icon="account_box" 
+                    name="studentCode" 
+                    label="Vidko kodas" 
+                    type="text"
+                  ></v-text-field>
+                  <v-text-field 
                     class="form-control" :class="{ 'is-invalid': submitted && !uid }" 
                     v-model="uid"
                     :error-messages="uidErrors"
@@ -135,6 +145,7 @@
       username: { required },
       firstName: { required },
       lastName: { required },
+      studentCode: { required },
       uid: { required },
       password: { required, minLength: minLength(8) },
       verificationPassword: { required, minLength: minLength(8) },
@@ -149,6 +160,7 @@
         username: '',
         firstName: '',
         lastName: '',
+        studentCode: '',
         uid: '',
         password: '',
         verificationPassword: '',
@@ -176,6 +188,12 @@
         const errors = []
         if (!this.$v.lastName.$dirty) return errors
         !this.$v.lastName.required && errors.push('Privalomas laukas')
+        return errors
+      },
+      studentCodeErrors () {
+        const errors = []
+        if (!this.$v.studentCode.$dirty) return errors
+        !this.$v.studentCode.required && errors.push('Privalomas laukas')
         return errors
       },
       uidErrors () {
@@ -222,8 +240,28 @@
       },
       //when you press the register button
       submit () {
-        //check if form is valid
+        //validate form
         this.$v.$touch()
+        //if form is valid
+        if(!this.$v.$invalid){
+          this.dialog = false
+
+          const { username, firstName, lastName, studentCode, uid, 
+                password, verificationPassword, email } = this;
+          
+          this.loading = true;
+          /*userService.login(username, password)
+          .then(
+              user => {
+                router.push(this.returnUrl);
+                this.dialog = false;
+              },
+              returnError => {
+                  this.returnError = returnError;
+                  this.loading = false;
+              }
+          );*/
+        }
       },
       //clear every data field in the form
       clear () {
@@ -232,6 +270,7 @@
         this.firstName = ''
         this.lastName = ''
         this.username = ''
+        this.studentCode = ''
         this.uid = ''
         this.password = ''
         this.verificationPassword = ''
