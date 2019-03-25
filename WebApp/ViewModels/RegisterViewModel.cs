@@ -19,6 +19,8 @@ namespace NFCSystem.ViewModels
 
         [Required]
         public string StudentCode { get; set; }
+        [Required]
+        public string Email { get; set; }
 
         [Required]
         public string UserName { get; set; }    //varpav

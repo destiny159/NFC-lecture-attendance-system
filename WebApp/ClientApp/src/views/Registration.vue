@@ -138,7 +138,13 @@
 
 <script>
   import { validationMixin } from 'vuelidate'
-  import { required, email, minLength } from 'vuelidate/lib/validators'
+  import { required, email, minLength, helpers } from 'vuelidate/lib/validators'
+  import { router } from '../router';
+  import { userService } from '../services';
+  //custom validator for passwords
+  function passwordsMustMatch () {
+    return this.password === this.verificationPassword // should return Boolean
+  }
   export default {
     mixins: [validationMixin],
     validations: {
@@ -147,7 +153,7 @@
       lastName: { required },
       studentCode: { required },
       uid: { required },
-      password: { required, minLength: minLength(8) },
+      password: { required, passwordsMustMatch, minLength: minLength(8) },
       verificationPassword: { required, minLength: minLength(8) },
       email: { required, email }
     },
@@ -175,6 +181,7 @@
       usernameErrors () {
         const errors = []
         if (!this.$v.username.$dirty) return errors
+        //only prints error message, doesn't do actual validation
         !this.$v.username.required && errors.push('Privalomas laukas')
         return errors
       },
@@ -249,19 +256,21 @@
           const { username, firstName, lastName, studentCode, uid, 
                 password, verificationPassword, email } = this;
           
+          //make this work
           this.loading = true;
-          /*userService.login(username, password)
+          userService.register(username, firstname, lastName, studentCode,
+            uid, email, password)
           .then(
               user => {
                 router.push(this.returnUrl);
-                this.dialog = false;
               },
               returnError => {
                   this.returnError = returnError;
                   this.loading = false;
               }
-          );*/
+          );
         }
+        return;
       },
       //clear every data field in the form
       clear () {

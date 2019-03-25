@@ -32,11 +32,12 @@ namespace JwtAuthentication.Controllers
         {
             var user = new ApplicationUser
             {
-                UID = model.UID,
+                UserName = model.UserName,
                 Name = model.Name,
                 Surname = model.Surname,
                 StudentCode = model.StudentCode.ToUpper(),
-                UserName = model.UserName,
+                UID = model.UID,
+                Email = model.Email,
                 SecurityStamp = Guid.NewGuid().ToString()
             };
             var result = await _userManager.CreateAsync(user, model.Password);
