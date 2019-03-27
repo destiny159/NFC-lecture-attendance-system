@@ -66,15 +66,21 @@
 
 <script>
 import { validationMixin } from 'vuelidate'
-import { required, minLength } from 'vuelidate/lib/validators'
+import { required, minLength, helpers } from 'vuelidate/lib/validators'
 import { router } from '../router';
 import { userService } from '../services';
-
+//custom validators
+function doesPasswordMatch () {
+    return true//place holder
+  }
+function isIdValid () {
+    return true//place holder
+  }  
 export default {
   mixins: [validationMixin],
     validations: {
-      username: { required, minLength: minLength(4) },
-      password: { required, minLength: minLength(6) }
+      username: { required, isIdValid, minLength: minLength(4) },
+      password: { required, doesPasswordMatch, minLength: minLength(6) }
     },
     data () {
       return {
@@ -95,6 +101,7 @@ export default {
         const errors = []
         if (!this.$v.username.$dirty) return errors
         //only prints error message, doesn't do actual validation
+        //!this.$v.user.isIdValid && errors.push('Tokio vartotojo nėra')
         !this.$v.username.minLength && errors.push('Vartotojo vardas turi būti bent iš 4 simbolių')
         !this.$v.username.required && errors.push('Privalomas laukas')
         return errors
@@ -102,6 +109,7 @@ export default {
       passwordErrors () {
         const errors = []
         if (!this.$v.password.$dirty) return errors
+        //!this.$v.password.doesPasswordMatch && errors.push('Neteisingas slaptažodis')
         !this.$v.password.minLength && errors.push('Slaptažodis turi būti bent iš 6 simbolių')
         !this.$v.password.required && errors.push('Privalomas laukas')
         return errors
