@@ -238,12 +238,23 @@
         this.submitted = true;
         const { username, password, verificationPassword, uid,
                 email, firstName, lastName } = this;
-
-        // stop here if form is invalid
-        if (!(username && password && verificationPassword && uid
-               && email && firstName && lastName )) {
-            return;
+        if(!this.$v.$invalid){
+          //make this work
+          this.loading = true;
+          userService.register(username, firstName, lastName, studentCode,
+            uid, email, password)
+          .then(
+              user => {
+                router.push(this.returnUrl);
+                this.dialog = false;
+              },
+              returnError => {
+                  this.returnError = returnError;
+                  this.loading = false;
+              }
+          );
         }
+        return;
       },
       //when you press the register button
       submit () {
@@ -251,18 +262,18 @@
         this.$v.$touch()
         //if form is valid
         if(!this.$v.$invalid){
-          this.dialog = false
 
           const { username, firstName, lastName, studentCode, uid, 
                 password, verificationPassword, email } = this;
           
           //make this work
           this.loading = true;
-          userService.register(username, firstname, lastName, studentCode,
-            uid, email, password)
+          userService.register(username, password, firstName, lastName, studentCode,
+            uid, email )
           .then(
               user => {
                 router.push(this.returnUrl);
+                this.dialog = false;
               },
               returnError => {
                   this.returnError = returnError;

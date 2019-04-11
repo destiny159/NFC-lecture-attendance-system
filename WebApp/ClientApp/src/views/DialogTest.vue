@@ -71,10 +71,10 @@ import { router } from '../router';
 import { userService } from '../services';
 //custom validators
 function doesPasswordMatch () {
-    return true//place holder
+    return true// place holder
   }
 function isIdValid () {
-    return true//place holder
+    return true// place holder
   }  
 export default {
   mixins: [validationMixin],
