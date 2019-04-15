@@ -247,11 +247,11 @@
       handleSubmit (e) {
         this.submitted = true;
         const { username, password, verificationPassword, uid,
-                email, firstName, lastName } = this;
+                email, firstName, lastName, group, studentCode } = this;
         if(!this.$v.$invalid){
           //make this work
           this.loading = true;
-          userService.register(username, firstName, lastName, studentCode,
+          userService.register(username, firstName, lastName, group, studentCode,
             uid, email, password)
           .then(
               user => {
@@ -273,12 +273,12 @@
         //if form is valid
         if(!this.$v.$invalid){
 
-          const { username, firstName, lastName, studentCode, uid, 
+          const { username, firstName, lastName, group, studentCode, uid, 
                 password, verificationPassword, email } = this;
           
           //make this work
           this.loading = true;
-          userService.register(username, password, firstName, lastName, studentCode,
+          userService.register(username, password, firstName, lastName, group, studentCode,
             uid, email )
           .then(
               user => {

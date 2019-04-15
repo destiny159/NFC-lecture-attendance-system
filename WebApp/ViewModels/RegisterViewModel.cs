@@ -18,6 +18,9 @@ namespace NFCSystem.ViewModels
         public string Surname { get; set; }
 
         [Required]
+        public string Group { get; set; }
+        
+        [Required]
         public string StudentCode { get; set; }
         [Required]
         public string Email { get; set; }
