@@ -12226,11 +12226,11 @@
   "project": {
     "version": "1.0.4",
     "restore": {
-      "projectUniqueName": "d:\\Documents\\GitHub\\NFC\\WebApp\\NFCSystem.csproj",
+      "projectUniqueName": "D:\\Documents\\GitHub\\NFC\\WebApp\\NFCSystem.csproj",
       "projectName": "NFCSystem",
-      "projectPath": "d:\\Documents\\GitHub\\NFC\\WebApp\\NFCSystem.csproj",
+      "projectPath": "D:\\Documents\\GitHub\\NFC\\WebApp\\NFCSystem.csproj",
       "packagesPath": "C:\\Users\\Rocco\\.nuget\\packages\\",
-      "outputPath": "d:\\Documents\\GitHub\\NFC\\WebApp\\obj\\",
+      "outputPath": "D:\\Documents\\GitHub\\NFC\\WebApp\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"

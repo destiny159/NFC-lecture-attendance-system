@@ -53,15 +53,17 @@
                     label="Studento pavardė" 
                     type="text"
                   ></v-text-field>
-                  <!--div v-show="submitted && !grupe" class="invalid-feedback">Įveskite savo akademinę grupę !</div>
+                  <!--div v-show="submitted && !grupe" class="invalid-feedback">Įveskite savo akademinę grupę !</div></-->
                   <v-text-field 
-                    class="form-control" :class="{ 'is-invalid': submitted && !grupe }" 
+                    class="form-control" :class="{ 'is-invalid': submitted && !group }" 
                     v-model="group"
                     prepend-icon="group" 
-                    name="grupė" 
+                    :error-messages="groupErrors"
+                    required
+                    name="group" 
                     label="Studento akademinė grupė (pvz IFF-7/3)" 
                     type="text"
-                  ></v-text-field>-->
+                  ></v-text-field>
                   <!--<div v-show="submitted && !uid" class="invalid-feedback">Įveskite UID!</div></-->
                   <v-text-field 
                     class="form-control" :class="{ 'is-invalid': submitted && !studentCode }" 
@@ -151,6 +153,7 @@
       username: { required },
       firstName: { required },
       lastName: { required },
+      group: { required },
       studentCode: { required },
       uid: { required },
       password: { required, passwordsMustMatch, minLength: minLength(8) },
@@ -166,6 +169,7 @@
         username: '',
         firstName: '',
         lastName: '',
+        group: '',
         studentCode: '',
         uid: '',
         password: '',
@@ -195,6 +199,12 @@
         const errors = []
         if (!this.$v.lastName.$dirty) return errors
         !this.$v.lastName.required && errors.push('Privalomas laukas')
+        return errors
+      },
+      groupErrors () {
+        const errors = []
+        if (!this.$v.group.$dirty) return errors
+        !this.$v.group.required && errors.push('Privalomas laukas')
         return errors
       },
       studentCodeErrors () {
@@ -289,6 +299,7 @@
         this.$v.$reset()
         this.firstName = ''
         this.lastName = ''
+        this.group = ''
         this.username = ''
         this.studentCode = ''
         this.uid = ''
