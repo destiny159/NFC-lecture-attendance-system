@@ -50,6 +50,6 @@
     }),
     props: {
       source: String
-    }
+    },
   }
 </script>

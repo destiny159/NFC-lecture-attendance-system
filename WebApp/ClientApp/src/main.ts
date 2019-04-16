@@ -3,11 +3,13 @@ import Vue from 'vue';
 import './plugins/axios';
 import './plugins/vuetify';
 import App from './App.vue';
-import router from './router';
-import store from '@/store/index';
+import { router } from './router';
+import { store } from '@/store/index';
 import './registerServiceWorker';
 
 Vue.config.productionTip = false;
+
+// @ts-ignore
 
 new Vue({
   router,
