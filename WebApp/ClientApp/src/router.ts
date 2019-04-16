@@ -1,25 +1,23 @@
 import Vue from 'vue';
 import Router from 'vue-router';
 import Home from './views/Home.vue';
+import LoginPage from './views/LoginPage.vue';
 
 Vue.use(Router);
 
-export default new Router({
+export const router = new Router({
   mode: 'history',
   base: process.env.BASE_URL,
   routes: [
     {
-      path: '/',
+      path: '/home',
       name: 'home',
       component: Home,
     },
     {
-      path: '/counter',
-      name: 'counter',
-      // route level code-splitting
-      // this generates a separate chunk (about.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      component: () => import(/* webpackChunkName: "counter" */ './views/Counter.vue'),
+      path: '/',
+      name: 'login',
+      component: LoginPage,
     },
     {
       path: '/fetch-data',
@@ -37,8 +35,28 @@ export default new Router({
       component: () => import(/* webpackChunkName: "fetch-data" */ './views/Timetable.vue'),
     },
     {
+      path: '/login',
+      name: 'login',
+      component: () => import(/* webpackChunkName: "fetch-data" */ './views/LoginMock.vue'),
+    },
+    {
       path: '*',
-      redirect: '/',
+      redirect: '/home',
     },
   ],
+});
+
+router.beforeEach((to, from, next) => {
+  // redirect to login page if not logged in and trying to access a restricted page
+  const publicPages = ['/'];
+  const authRequired = !publicPages.includes(to.path);
+  const loggedIn = localStorage.getItem('user');
+
+  if (authRequired && !loggedIn) {
+    return next({
+      path: '/',
+      query: { returnUrl: to.path },
+    });
+  }
+  next();
 });

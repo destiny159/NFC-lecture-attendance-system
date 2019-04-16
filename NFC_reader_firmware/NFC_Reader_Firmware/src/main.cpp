@@ -1,8 +1,9 @@
-#include <Arduino.h>
+#include <Arduino.h> // Arduino framework library
 #include <Wire.h>
 #include <SPI.h>
-#include <Adafruit_PN532.h>
+#include <Adafruit_PN532.h> 
 #include <WiFi.h>
+#include "esp_wpa2.h" //wpa2 library for connections to Enterprise networks
 #include "time.h"
 #include <HTTPClient.h>
 #include "defines.h"
@@ -10,11 +11,14 @@
 #include <ArduinoJson.h>
 
 #define DEBUG
+#define EDUROAM
 
 
 // NFC reader object, uses pins defined in defines.h
 Adafruit_PN532 nfc(PN532_SCK, PN532_MISO, PN532_MOSI, PN532_SS);
-
+uint64_t start;
+uint64_t startHearbeat;
+bool againLine = false;
 
 void setup(void) {
   // Setup pins
@@ -27,22 +31,32 @@ void setup(void) {
   configureTime();
 
   // Setup time
-
+  start = millis();
+  startHearbeat = millis();
   // Nofify about finished setup
   beep(2, 100);
 }
 
-
 void loop(void) {
-  boolean success;
+  boolean success = false;
   uint8_t uid[] = { 0, 0, 0, 0, 0, 0, 0 };	// Buffer to store the returned UID
   uint8_t uidLength;				                // Length of the UID (4 or 7 bytes depending on ISO14443A card type)
   
   // Wait for an ISO14443A type cards
   // 'uid' will be populated with the UID, and uidLength will indicate
   // if the uid is 4 bytes (Mifare Classic) or 7 bytes (Mifare Ultralight)
-  success = nfc.readPassiveTargetID(PN532_MIFARE_ISO14443A, &uid[0], &uidLength);
-  parserNFCResults(success, uid, uidLength);
+  if(millis() - startHearbeat >= 100)
+  {
+    startHearbeat = millis();
+    printHearBeat();
+  }
+  if(millis() - start >= 1000)
+  {
+    againLine = true;
+    start = millis();
+    success = nfc.readPassiveTargetID(PN532_MIFARE_ISO14443A, &uid[0], &uidLength);
+    parserNFCResults(success, uid, uidLength);
+  }
 
   if((WiFi.status() == WL_CONNECTED) && success) 
   {
@@ -61,6 +75,14 @@ void loop(void) {
     sendPOSTRequest(json);
   }
 }
+
+
+void printHearBeat()
+{
+  if(againLine) { Serial.println(); againLine = false;}
+  Serial.print(".");
+}
+
 
 void charToStringL(const char S[], String &D)
 {
@@ -92,6 +114,7 @@ bool sendPOSTRequest(String messageJson)
   // Configure traget server url
   Serial.print("[HTTP] begin...\n");
   http.begin(API_ENDPOINT); 
+  http.setTimeout(5000);
   http.addHeader("Content-Type", "application/json");
 
   // start connection and send HTTP header
@@ -118,7 +141,7 @@ bool sendPOSTRequest(String messageJson)
   else 
   {
     Serial.printf("[HTTP] GET... failed, error: %s\n", http.errorToString(httpCode).c_str());
-    beep(4, 50);
+    beep(4, 100);
     return false;
   }
   http.end();
@@ -178,13 +201,27 @@ bool printLocalTime(char s[])
 
 void wifiConnect()
 {
-  Serial.printf("Connecting to %s ", SSID);
-  WiFi.begin(SSID, PASSWD);
+  WiFi.disconnect(true);  //disconnect form wifi to set new wifi connection
+  WiFi.mode(WIFI_STA); //init wifi mode
+  Serial.printf("Connecting to %s ", EAP_SSID);
+
+  #ifdef EDUROAM
+    //esp_wifi_sta_wpa2_ent_set_identity((uint8_t *)EAP_IDENTITY, strlen(EAP_IDENTITY)); //provide identity
+    esp_wifi_sta_wpa2_ent_set_username((uint8_t *)EAP_IDENTITY, strlen(EAP_IDENTITY)); //provide username --> identity and username is same
+    esp_wifi_sta_wpa2_ent_set_password((uint8_t *)EAP_PASSWORD, strlen(EAP_PASSWORD)); //provide password
+    esp_wpa2_config_t config = WPA2_CONFIG_INIT_DEFAULT(); //set config settings to default
+    esp_wifi_sta_wpa2_ent_enable(&config); //set config settings to enable function
+    WiFi.begin(EAP_SSID);
+  #else
+    WiFi.begin(SSID, PASSWD);
+  #endif // EDUROAM
+
   while (WiFi.status() != WL_CONNECTED) {
       delay(250);
       Serial.print(".");
   }
   Serial.println("\nCONNECTED");
+  Serial.println(WiFi.localIP());
 }
 
 

@@ -5,11 +5,11 @@ using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using NFCSystem.Data;
 
-namespace NFCSystem.Migrations.NFCScan
+namespace NFCSystem.Migrations
 {
     [DbContext(typeof(NFCScanContext))]
-    [Migration("20190311174956_users")]
-    partial class users
+    [Migration("20190415154855_Mig4")]
+    partial class Mig4
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -20,14 +20,17 @@ namespace NFCSystem.Migrations.NFCScan
 
             modelBuilder.Entity("NFCSystem.Models.NFCScan", b =>
                 {
-                    b.Property<long>("TimeStamp")
+                    b.Property<long>("ScanID")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<string>("DateTime");
+                    b.Property<string>("StudId")
+                        .IsRequired();
 
-                    b.Property<int>("UID");
+                    b.Property<long>("TimeStamp");
 
-                    b.HasKey("TimeStamp");
+                    b.Property<long>("UID");
+
+                    b.HasKey("ScanID");
 
                     b.ToTable("NFCScans");
                 });

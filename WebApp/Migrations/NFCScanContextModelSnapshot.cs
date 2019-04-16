@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using NFCSystem.Data;
 
-namespace NFCSystem.Migrations.NFCScan
+namespace NFCSystem.Migrations
 {
     [DbContext(typeof(NFCScanContext))]
     partial class NFCScanContextModelSnapshot : ModelSnapshot
@@ -18,14 +18,17 @@ namespace NFCSystem.Migrations.NFCScan
 
             modelBuilder.Entity("NFCSystem.Models.NFCScan", b =>
                 {
-                    b.Property<long>("TimeStamp")
+                    b.Property<long>("ScanID")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<string>("DateTime");
+                    b.Property<string>("StudId")
+                        .IsRequired();
 
-                    b.Property<int>("UID");
+                    b.Property<long>("TimeStamp");
 
-                    b.HasKey("TimeStamp");
+                    b.Property<long>("UID");
+
+                    b.HasKey("ScanID");
 
                     b.ToTable("NFCScans");
                 });

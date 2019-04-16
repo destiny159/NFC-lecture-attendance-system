@@ -17,17 +17,6 @@ namespace NFCSystem.Controllers
         public NFCScanController(NFCScanContext context)
         {
             _context = context;
-
-            if (_context.NFCScans.Count() == 0)
-            {
-                // Create a new TodoItem if collection is empty,
-                // which means you can't delete all TodoItems.
-                _context.NFCScans.Add(new NFCScan { UID = 454655656, TimeStamp = 546785754655 });
-                _context.NFCScans.Add(new NFCScan { UID = 454655656, TimeStamp = 5 });
-                _context.NFCScans.Add(new NFCScan { UID = 454655656, TimeStamp = 54678555754655 });
-                _context.NFCScans.Add(new NFCScan { UID = 454655656, TimeStamp = 54678555754654 });
-                _context.SaveChanges();
-            }
         }
 
         // GET: api/Todo
@@ -59,7 +48,7 @@ namespace NFCSystem.Controllers
             await _context.SaveChangesAsync();
             //System.Diagnostics.Debug.WriteLine(item.ToString());
 
-            return CreatedAtAction(nameof(GetScan), new { id = item.UID }, item);
+            return CreatedAtAction(nameof(GetScan), new { id = item.ScanID }, item);
         }   
     }
 }

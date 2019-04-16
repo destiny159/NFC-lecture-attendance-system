@@ -8,3 +8,4 @@ time_t getCurrentTimestamp();
 uint parserNFCResults(bool success, uint8_t (&uid)[7], uint8_t uidLength);
 void beep(int count, int duration);
 void charToStringL(const char S[], String &D);
+void printHearBeat();

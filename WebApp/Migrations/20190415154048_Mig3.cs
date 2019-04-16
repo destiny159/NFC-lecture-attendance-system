@@ -1,9 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace NFCSystem.Migrations.NFCScan
+namespace NFCSystem.Migrations
 {
-    public partial class users : Migration
+    public partial class Mig3 : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -13,7 +13,7 @@ namespace NFCSystem.Migrations.NFCScan
                 {
                     TimeStamp = table.Column<long>(nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    UID = table.Column<int>(nullable: false),
+                    UID = table.Column<long>(nullable: false),
                     DateTime = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
