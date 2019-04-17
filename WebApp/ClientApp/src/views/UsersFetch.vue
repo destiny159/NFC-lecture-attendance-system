@@ -1,13 +1,13 @@
 <template>
+  <div>
   <v-container fluid>
     <v-slide-y-transition mode="out-in">
       <v-layout column>
         <h1>Users fetch</h1>
         <p>This component demonstrates fetching data from the server.</p>
-
         <v-data-table
             :headers="headers"
-            :items="scans"
+            :items="users"
             hide-actions
             :loading="loading"
             class="elevation-1"
@@ -21,12 +21,28 @@
               <td>{{ props.item.studentCode }}</td>
               <td>{{ props.item.email }}</td>
               <td>{{ props.item.uid }}</td>
+              <td class="justify-center layout px-0">
+              <v-icon
+                small
+                class="mr-2"
+                @click="editItem(props.item)"
+              >
+                edit
+              </v-icon>
+              <v-icon
+                small
+                @click="deleteItem(props.item)"
+              > 
+                delete
+              </v-icon>
+            </td>
             </template>
           </v-data-table>
 
       </v-layout>
     </v-slide-y-transition>
   </v-container>
+  </div>
 </template>
 
 <script lang="ts">
@@ -37,7 +53,7 @@ import axios from 'axios';
 @Component({})
 export default class FetchDataView extends Vue {
   private loading: boolean = true;
-  private scans: RegisteredUsers[] = [];
+  private users: RegisteredUsers[] = [];
   private headers = [
     { text: 'Prisijungimo vardas', value: 'userName' },
     { text: 'Vardas', value: 'name' },
@@ -46,6 +62,7 @@ export default class FetchDataView extends Vue {
     { text: 'Vidko', value: 'studentCode' },
     { text: 'El. Paštas', value: 'email' },
     { text: 'UID', value: 'uid'},
+    { text: '', value: ''},
   ];
 
   private created() {
@@ -55,7 +72,7 @@ export default class FetchDataView extends Vue {
   private fetchUsers() {
     axios.get<RegisteredUsers[]>('api/userlist/getusers')
       .then((response) => {
-        this.scans = response.data;
+        this.users = response.data;
         this.loading = false;
       });
   }
