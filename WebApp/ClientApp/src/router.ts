@@ -38,6 +38,11 @@ export const router = new Router({
       component: () => import(/* webpackChunkName: "fetch-data" */ './views/NfcFetch.vue'),
     },
     {
+      path: '/user-list',
+      name: 'user-list',
+      component: () => import(/* webpackChunkName: "fetch-data" */ './views/UsersFetch.vue'),
+    },
+    {
       path: '/timetable',
       name: 'timetable',
       component: () => import(/* webpackChunkName: "fetch-data" */ './views/Timetable.vue'),

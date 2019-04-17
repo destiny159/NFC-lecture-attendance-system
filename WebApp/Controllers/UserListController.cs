@@ -10,27 +10,27 @@ namespace NFCSystem.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class NFCScanController : ControllerBase
+    public class UserListController : ControllerBase
     {
-        private readonly NFCScanContext _context;
+        private readonly ApplicationDbContext _context;
 
-        public NFCScanController(NFCScanContext context)
+        public UserListController(ApplicationDbContext context)
         {
             _context = context;
         }
 
         // GET: api/Todo
         [HttpGet("[action]")]
-        public async Task<ActionResult<IEnumerable<NFCScan>>> GetScans()
+        public async Task<ActionResult<IEnumerable<ApplicationUser>>> GetUsers()
         {
-            return await _context.NFCScans.ToListAsync();
+            return await _context.Users.ToListAsync();
         }
 
         // GET: api/Todo/5
         [HttpGet("[action]/{id}")]
-        public async Task<ActionResult<NFCScan>> GetScan(long id)
+        public async Task<ActionResult<ApplicationUser>> GetUser(string id)
         {
-        var todoItem = await _context.NFCScans.FindAsync(id);
+        var todoItem = await _context.Users.FindAsync(id);
 
         if (todoItem == null)
         {
@@ -42,13 +42,13 @@ namespace NFCSystem.Controllers
 
         // POST: api/Todo
         [HttpPost("[action]")]
-        public async Task<ActionResult<NFCScan>> PostScan(NFCScan item)
+        public async Task<ActionResult<ApplicationUser>> PostUser(ApplicationUser item)
         {
-            _context.NFCScans.Add(item);
+            _context.Users.Add(item);
             await _context.SaveChangesAsync();
             //System.Diagnostics.Debug.WriteLine(item.ToString());
 
-            return CreatedAtAction(nameof(GetScan), new { id = item.ScanID }, item);
+            return CreatedAtAction(nameof(GetUser), new { id = item.UserName }, item);
         }   
     }
 }
