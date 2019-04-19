@@ -19,6 +19,10 @@ import {
   VTooltip,
   VImg,
   VTextField,
+  VSheet,
+  VDatePicker,
+  VMenu,
+  VSelect,
 } from 'vuetify'
 import 'vuetify/src/stylus/app.styl'
 
@@ -42,6 +46,10 @@ Vue.use(Vuetify, {
     VTooltip,
     VImg,
     VTextField,
+    VSelect,
+    VMenu,
+    VDatePicker,
+    VSheet,
   },
   theme: {
     primary: '#1976D2',
