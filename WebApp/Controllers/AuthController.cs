@@ -35,6 +35,7 @@ namespace JwtAuthentication.Controllers
                 UserName = model.UserName,
                 Name = model.Name,
                 Surname = model.Surname,
+                Group = model.Group,
                 StudentCode = model.StudentCode.ToUpper(),
                 UID = model.UID,
                 Email = model.Email,
