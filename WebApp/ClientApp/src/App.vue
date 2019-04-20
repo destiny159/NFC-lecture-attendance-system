@@ -28,7 +28,7 @@
       <DialogTest v-if="!isLoggedIn()" right/>
       <v-btn v-if="isLoggedIn()" icon @click.stop="logout">
         <v-icon>exit_to_app</v-icon>
-      </v-btn> 
+      </v-btn>
     </v-toolbar>
 
     <v-content>
@@ -83,7 +83,7 @@ export default class App extends Vue {
     this.$forceUpdate();
     console.log(this.isLoggedIn());
   }
-  
+
 
   isLoggedIn()
   {
@@ -106,4 +106,3 @@ html {
   overflow: hidden;
 }
 </style>
-
