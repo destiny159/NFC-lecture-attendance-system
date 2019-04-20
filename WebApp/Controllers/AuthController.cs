@@ -44,7 +44,7 @@ namespace JwtAuthentication.Controllers
             var result = await _userManager.CreateAsync(user, model.Password);
             if (result.Succeeded)
             {
-                await _userManager.AddToRoleAsync(user, "User");
+                await _userManager.AddToRoleAsync(user, "USER");
             }
             return Ok(new { Username = user.UserName });
         }
@@ -75,7 +75,8 @@ namespace JwtAuthentication.Controllers
                   new
                   {
                       token = new JwtSecurityTokenHandler().WriteToken(token),
-                      expiration = token.ValidTo
+                      expiration = token.ValidTo,
+                      userName = user
                   });
             }
             return Unauthorized();

@@ -21,7 +21,7 @@
                   <v-form>                  
                       <div class="form-group">
                         <!--<div v-show="submitted && !username" class="invalid-feedback">Įveskite vartotojo vardą!</div></-->
-                        <v-text-field
+                        <v-text-field @keyup.enter="handleSubmit"
                           class="form-control" 
                           :class="{ 'is-invalid': submitted && !username }" 
                           v-model="username" 
@@ -35,7 +35,7 @@
                       </div>
                       <div class="form-group">
                         <!--<div v-show="submitted && !password" class="invalid-feedback">Įveskite slaptažodį!</div></-->
-                        <v-text-field 
+                        <v-text-field @keyup.enter="handleSubmit" 
                           v-model="password" 
                           :error-messages="passwordErrors"
                           required 
@@ -117,7 +117,7 @@ export default {
     },
     created () {
       // reset login status
-      userService.logout();
+      //userService.logout();
 
       // get return url from route parameters or default to '/'
       this.returnUrl = this.$route.query.returnUrl || '/home';

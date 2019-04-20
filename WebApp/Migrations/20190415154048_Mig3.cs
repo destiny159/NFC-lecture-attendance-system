@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace NFCSystem.Migrations
 {
-    public partial class users : Migration
+    public partial class Mig3 : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

@@ -9,7 +9,7 @@ namespace NFCSystem.ViewModels
     public class RegisterViewModel
     {
         [Required]
-        public int UID { get; set; }
+        public Int64 UID { get; set; }
 
         [Required]
         public string Name { get; set; }

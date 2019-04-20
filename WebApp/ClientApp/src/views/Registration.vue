@@ -207,6 +207,7 @@
         !this.$v.group.required && errors.push('Privalomas laukas')
         return errors
       },
+
       studentCodeErrors () {
         const errors = []
         if (!this.$v.studentCode.$dirty) return errors
@@ -272,8 +273,7 @@
         this.$v.$touch()
         //if form is valid
         if(!this.$v.$invalid){
-
-          const { username, firstName, lastName, group, studentCode, uid, 
+          const { username, firstName, lastName, group, studentCode, uid,
                 password, verificationPassword, email } = this;
           
           //make this work

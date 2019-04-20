@@ -20,14 +20,6 @@ export const router = new Router({
       component: LoginPage,
     },
     {
-      path: '/counter',
-      name: 'counter',
-      // route level code-splitting
-      // this generates a separate chunk (about.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      component: () => import(/* webpackChunkName: "counter" */ './views/Counter.vue'),
-    },
-    {
       path: '/fetch-data',
       name: 'fetch-data',
       component: () => import(/* webpackChunkName: "fetch-data" */ './views/FetchData.vue'),
@@ -41,11 +33,6 @@ export const router = new Router({
       path: '/timetable',
       name: 'timetable',
       component: () => import(/* webpackChunkName: "fetch-data" */ './views/Timetable.vue'),
-    },
-    {
-      path: '/dialog',
-      name: 'dialog',
-      component: () => import(/* webpackChunkName: "fetch-data" */ './views/DialogTest.vue'),
     },
     {
       path: '/login',
