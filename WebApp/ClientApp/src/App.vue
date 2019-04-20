@@ -46,7 +46,7 @@
   </v-app>
 </template>
 
-<script lang="js">
+<script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
 import DialogTest from './views/DialogTest.vue'; // @ is an alias to /src
 import Registration from './views/Registration.vue';
@@ -66,6 +66,7 @@ export default class App extends Vue {
   private miniVariant: boolean = false;
   private right: boolean = true;
   private title: string = 'NFC lankomumo sistema';
+  private student = JSON.parse(localStorage.getItem("user")  || '{}');
   private renderComponent: boolean =  true;
   private items = [
     { title: 'Home', icon: 'home', link: '/home' },
@@ -94,14 +95,7 @@ export default class App extends Vue {
     return localStorage.getItem("user");
   }
 
-  getUser()
-  {
-    let localStorageItem = JSON.parse(localStorage.getItem("user"));
-    console.log(localStorageItem.name)
-
-  }
 }
-
 </script>
 
 <style lang="css">
