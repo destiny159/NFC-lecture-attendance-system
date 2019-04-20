@@ -53,15 +53,17 @@
                     label="Studento pavardė" 
                     type="text"
                   ></v-text-field>
-                  <!--div v-show="submitted && !grupe" class="invalid-feedback">Įveskite savo akademinę grupę !</div>
+                  <!--div v-show="submitted && !grupe" class="invalid-feedback">Įveskite savo akademinę grupę !</div></-->
                   <v-text-field 
-                    class="form-control" :class="{ 'is-invalid': submitted && !grupe }" 
+                    class="form-control" :class="{ 'is-invalid': submitted && !group }" 
                     v-model="group"
                     prepend-icon="group" 
-                    name="grupė" 
+                    :error-messages="groupErrors"
+                    required
+                    name="group" 
                     label="Studento akademinė grupė (pvz IFF-7/3)" 
                     type="text"
-                  ></v-text-field>-->
+                  ></v-text-field>
                   <!--<div v-show="submitted && !uid" class="invalid-feedback">Įveskite UID!</div></-->
                   <v-text-field 
                     class="form-control" :class="{ 'is-invalid': submitted && !studentCode }" 
@@ -151,6 +153,7 @@
       username: { required },
       firstName: { required },
       lastName: { required },
+      group: { required },
       studentCode: { required },
       uid: { required },
       password: { required, passwordsMustMatch, minLength: minLength(8) },
@@ -166,6 +169,7 @@
         username: '',
         firstName: '',
         lastName: '',
+        group: '',
         studentCode: '',
         uid: '',
         password: '',
@@ -197,6 +201,13 @@
         !this.$v.lastName.required && errors.push('Privalomas laukas')
         return errors
       },
+      groupErrors () {
+        const errors = []
+        if (!this.$v.group.$dirty) return errors
+        !this.$v.group.required && errors.push('Privalomas laukas')
+        return errors
+      },
+
       studentCodeErrors () {
         const errors = []
         if (!this.$v.studentCode.$dirty) return errors
@@ -237,11 +248,11 @@
       handleSubmit (e) {
         this.submitted = true;
         const { username, password, verificationPassword, uid,
-                email, firstName, lastName } = this;
+                email, firstName, lastName, group, studentCode } = this;
         if(!this.$v.$invalid){
           //make this work
           this.loading = true;
-          userService.register(username, firstName, lastName, studentCode,
+          userService.register(username, firstName, lastName, group, studentCode,
             uid, email, password)
           .then(
               user => {
@@ -262,13 +273,12 @@
         this.$v.$touch()
         //if form is valid
         if(!this.$v.$invalid){
-
-          const { username, firstName, lastName, studentCode, uid, 
+          const { username, firstName, lastName, group, studentCode, uid,
                 password, verificationPassword, email } = this;
           
           //make this work
           this.loading = true;
-          userService.register(username, password, firstName, lastName, studentCode,
+          userService.register(username, password, firstName, lastName, group, studentCode,
             uid, email )
           .then(
               user => {
@@ -289,6 +299,7 @@
         this.$v.$reset()
         this.firstName = ''
         this.lastName = ''
+        this.group = ''
         this.username = ''
         this.studentCode = ''
         this.uid = ''

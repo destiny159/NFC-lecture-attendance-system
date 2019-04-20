@@ -35,11 +35,11 @@ function logout() {
     localStorage.removeItem('user');
 }
 
-function register(username, password, name, surname, studentCode, uid, email) {
+function register(username, password, name, surname,group, studentCode, uid, email) {
     const requestOptions = {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({username, password, name, surname, studentCode, uid, email})
+        body: JSON.stringify({username, password, name, surname, group, studentCode, uid, email})
     };
 
     return fetch(`/register`, requestOptions)

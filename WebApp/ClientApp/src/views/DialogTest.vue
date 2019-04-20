@@ -57,7 +57,6 @@
                        <v-btn color="primary" @click="handleSubmit">Prisijungti</v-btn>
                        <v-btn color="red" class="white--text" @click="dialog = false">Uždaryti</v-btn>
                     </button>
-                   <input @keyup.enter="submitStuff"  />
                    </div>
                 </v-card-actions>
               </form>
