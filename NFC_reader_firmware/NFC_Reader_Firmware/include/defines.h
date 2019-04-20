@@ -25,5 +25,8 @@
 
 // API settings
 // #define API_ENDPOINT    "http://ptsv2.com/t/je1wo-1552248829/post"
-#define API_ENDPOINT  "http://lankomumas.duckdns.org:4430:/api/nfcscan/postscan"
-//#define API_ENDPOINT    "http://192.168.0.101:4430/api/nfcscan/postscan"
+//#define API_ENDPOINT  "http://lankomumas.duckdns.org:4430:/api/nfcscan/postscan"
+#define API_ENDPOINT    "http://192.168.0.101:4430/api/nfcscan/postscan"
+
+// Device config
+#define DEVICE_ID 0x0001

@@ -9,7 +9,7 @@ namespace NFCSystem.ViewModels
     public class RegisterViewModel
     {
         [Required]
-        public int UID { get; set; }
+        public Int64 UID { get; set; }
 
         [Required]
         public string Name { get; set; }
@@ -18,7 +18,12 @@ namespace NFCSystem.ViewModels
         public string Surname { get; set; }
 
         [Required]
+        public string Group { get; set; }
+        
+        [Required]
         public string StudentCode { get; set; }
+        [Required]
+        public string Email { get; set; }
 
         [Required]
         public string UserName { get; set; }    //varpav

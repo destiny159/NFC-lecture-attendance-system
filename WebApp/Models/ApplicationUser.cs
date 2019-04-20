@@ -9,9 +9,10 @@ namespace NFCSystem.Models
 {
     public class ApplicationUser : IdentityUser
     {
-        public int UID { get; set; }
+        public Int64 UID { get; set; }
         public string Name { get; set; }
         public string Surname { get; set; }
+        public string Group { get; set; }
         public string StudentCode { get; set; }
     }
 }

@@ -18,14 +18,17 @@ namespace NFCSystem.Migrations
 
             modelBuilder.Entity("NFCSystem.Models.NFCScan", b =>
                 {
-                    b.Property<long>("TimeStamp")
+                    b.Property<long>("ScanID")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<string>("DateTime");
+                    b.Property<string>("StudId")
+                        .IsRequired();
+
+                    b.Property<long>("TimeStamp");
 
                     b.Property<long>("UID");
 
-                    b.HasKey("TimeStamp");
+                    b.HasKey("ScanID");
 
                     b.ToTable("NFCScans");
                 });

@@ -32,17 +32,19 @@ namespace JwtAuthentication.Controllers
         {
             var user = new ApplicationUser
             {
-                UID = model.UID,
+                UserName = model.UserName,
                 Name = model.Name,
                 Surname = model.Surname,
+                Group = model.Group,
                 StudentCode = model.StudentCode.ToUpper(),
-                UserName = model.UserName,
+                UID = model.UID,
+                Email = model.Email,
                 SecurityStamp = Guid.NewGuid().ToString()
             };
             var result = await _userManager.CreateAsync(user, model.Password);
             if (result.Succeeded)
             {
-                await _userManager.AddToRoleAsync(user, "User");
+                await _userManager.AddToRoleAsync(user, "USER");
             }
             return Ok(new { Username = user.UserName });
         }
@@ -73,7 +75,8 @@ namespace JwtAuthentication.Controllers
                   new
                   {
                       token = new JwtSecurityTokenHandler().WriteToken(token),
-                      expiration = token.ValidTo
+                      expiration = token.ValidTo,
+                      userName = user
                   });
             }
             return Unauthorized();
