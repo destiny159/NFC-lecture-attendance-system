@@ -67,8 +67,8 @@ void loop(void) {
     char timeString[32] = "ABXDSFS";
     printLocalTime(timeString);
     doc["UID"] = cardUid;
+    doc["DeviceID"] = DEVICE_ID;
     doc["TimeStamp"] = timestamp;
-    doc["DateTime"] = timeString;
     serializeJson(doc, json);
     serializeJsonPretty(doc, Serial);
     Serial.println();
