@@ -1,46 +1,261 @@
 <template>
-  <v-layout>
-    <v-flex>
-      <v-sheet>
-        <!-- now is normally calculated by itself, but to keep the calendar in this date range to view events -->
+  <v-layout wrap>
+    <v-flex
+      sm12
+      lg3
+      class="pa-3 mb-3 feature-pane"
+    >
+      <v-btn
+        fab
+        outline
+        small
+        absolute
+        left
+        color="primary"
+        @click="$refs.calendar.prev()"
+      >
+        <v-icon dark>
+          keyboard_arrow_left
+        </v-icon>
+      </v-btn>
+      <v-btn
+        fab
+        outline
+        small
+        absolute
+        right
+        color="primary"
+        @click="$refs.calendar.next()"
+      >
+        <v-icon
+          dark
+        >
+          keyboard_arrow_right
+        </v-icon>
+      </v-btn>
+      <br><br><br>
+      <v-select
+        v-model="type"
+        :items="typeOptions"
+        label="Type"
+      ></v-select>
+      <v-menu
+        ref="startMenu"
+        v-model="startMenu"
+        :close-on-content-click="false"
+        :nudge-right="40"
+        :return-value.sync="start"
+        transition="scale-transition"
+        min-width="290px"
+        lazy
+        offset-y
+        full-width
+      >
+        <template v-slot:activator="{ on }">
+          <v-text-field
+            v-model="start"
+            label="Start Date"
+            prepend-icon="event"
+            readonly
+            v-on="on"
+          ></v-text-field>
+        </template>
+        <v-date-picker
+          v-model="start"
+          no-title
+          scrollable
+        >
+          <v-spacer></v-spacer>
+          <v-btn
+            flat
+            color="primary"
+            @click="startMenu = false"
+          >
+            Cancel
+          </v-btn>
+          <v-btn
+            flat
+            color="primary"
+            @click="$refs.startMenu.save(start)"
+          >
+            OK
+          </v-btn>
+        </v-date-picker>
+      </v-menu>
+      <v-menu
+        v-if="hasEnd"
+        ref="endMenu"
+        v-model="endMenu"
+        :close-on-content-click="false"
+        :nudge-right="40"
+        :return-value.sync="end"
+        transition="scale-transition"
+        min-width="290px"
+        lazy
+        offset-y
+        full-width
+      >
+        <template v-slot:activator="{ on }">
+          <v-text-field
+            v-model="end"
+            label="End Date"
+            prepend-icon="event"
+            readonly
+            v-on="on"
+          ></v-text-field>
+        </template>
+        <v-date-picker
+          v-model="end"
+          no-title
+          scrollable
+        >
+          <v-spacer></v-spacer>
+          <v-btn
+            flat
+            color="primary"
+            @click="endMenu = false"
+          >
+            Cancel
+          </v-btn>
+          <v-btn
+            flat
+            color="primary"
+            @click="$refs.endMenu.save(end)"
+          >
+            OK
+          </v-btn>
+        </v-date-picker>
+      </v-menu>
+      <v-menu
+        ref="nowMenu"
+        v-model="nowMenu"
+        :close-on-content-click="false"
+        :nudge-right="40"
+        :return-value.sync="now"
+        transition="scale-transition"
+        min-width="290px"
+        lazy
+        offset-y
+        full-width
+      >
+        <v-spacer></v-spacer>
+        <v-btn
+          flat
+          color="primary"
+          @click="nowMenu = false"
+        >
+          Cancel
+        </v-btn>
+        <v-btn
+          flat
+          color="primary"
+          @click="$refs.nowMenu.save(now)"
+        >
+          OK
+          </v-btn>
+      </v-menu>
+      <v-select
+        v-model="weekdays"
+        :items="weekdaysOptions"
+        label="Weekdays"
+      ></v-select>
+      <v-text-field
+        v-if="type === 'custom-weekly'"
+        v-model="minWeeks"
+        label="Minimum Weeks"
+        type="number"
+      ></v-text-field>
+      <v-select
+        v-if="type === 'custom-daily'"
+        v-model="maxDays"
+        :items="maxDaysOptions"
+        label="# of Days"
+      ></v-select>
+    </v-flex>
+    <v-flex
+      sm12
+      lg9
+      class="pl-3 mt-2"
+    >
+      <v-sheet height="500">
         <v-calendar
           ref="calendar"
-          :now="today"
-          :value="today"
-          color="primary"
-          type="week"
-          interval-minutes="30"
-          first-interval="16"
-          interval-count="22"
-          interval-height="45"
+          v-model="start"
+          :type="type"
+          :start="start"
+          :end="end"
+          :min-weeks="minWeeks"
+          :max-days="maxDays"
+          :now="now"
+          :dark="dark"
+          :weekdays="weekdays"
+          :first-interval="intervals.first"
+          :interval-minutes="intervals.minutes"
+          :interval-count="intervals.count"
+          :interval-height="intervals.height"
+          :interval-style="intervalStyle"
+          :show-interval-label="showIntervalLabel"
+          :color="color"
         >
-          <!-- the events at the top (all-day) -->
-          <template v-slot:dayHeadere="{ date }">
-            <template v-for="event in eventsMap[date]">
-              <!-- all day events don't have time -->
-              <div
-                v-if="!event.time"
-                :key="event.title"
-                class="my-event"
-                @click="open(event)"
-                v-html="event.title"
-              ></div>
-            </template>
-          </template>
-          <!-- the events at the bottom (timed) -->
-          <template v-slot:dayBody="{ date, timeToY, minutesToPixels }">
+        <template v-slot:dayBody="{ date, timeToY, minutesToPixels }">
             <template v-for="event in eventsMap[date]">
               <!-- timed events -->
               <div
-                v-if="event.time"
                 :key="event.title"
-                :style="{ top: timeToY(event.time) + 'px', height: minutesToPixels(event.duration) + 'px' }"
-                class="my-event with-time"
-                @click="open(event)"
+                :style="{ top: timeToY(event.start.substring(11,16)) + 'px', height: minutesToPixels(event.lectureDuration) + 'px', color: 'black', backgroundColor: event.color, borderColor: event.color }"
+                class="my-eventTime with-time"
                 v-html="event.title"
-              ></div>
+                @click="open(event)"
+              >
+              </div>
             </template>
           </template>
+        <template v-slot:day="{ date }">
+              <template v-for="event in eventsMap[date]">
+                <div :key="event.title">   
+                  <v-sheet :color="event.color">             
+                    <v-menu
+                      :key="event.title"
+                      v-model="event.open"
+                      full-width
+                      offset-x
+                    >                
+                      <template v-slot:activator="{ on }">
+                        <div
+                          class="my-event"
+                          v-on="on"
+                          v-html="event.title"
+                        ></div>
+                      </template>
+                      <v-card
+                        color="grey lighten-4"
+                        min-width="350px"
+                        flat
+                      >
+                        <v-toolbar
+                          :color="event.color"
+                          dark
+                        >
+                          <v-toolbar-title v-html="event.title"></v-toolbar-title>
+                          <v-spacer></v-spacer>
+                        </v-toolbar>
+                        <v-card-title primary-title>
+                          <span v-html="event.details"></span>
+                        </v-card-title>
+                        <v-card-actions>
+                          <v-btn
+                            flat
+                            color="secondary"
+                          >
+                            Close
+                          </v-btn>
+                        </v-card-actions>
+                      </v-card>
+                    </v-menu>
+                  </v-sheet>
+                </div>
+              </template>
+            </template>
         </v-calendar>
       </v-sheet>
     </v-flex>
@@ -48,58 +263,192 @@
 </template>
 
 <script>
+  const weekdaysDefault = [1, 2, 3, 4, 5, 6, 0]
+  const intervalsDefault = {
+    first: 0,
+    minutes: 60,
+    count: 24,
+    height: 40
+  }
+  const stylings = {
+    default (interval) {
+      return undefined
+    },
+    workday (interval) {
+      const inactive = interval.weekday === 0 ||
+        interval.weekday === 6 ||
+        interval.hour < 9 ||
+        interval.hour >= 17
+      const startOfHour = interval.minute === 0
+      const dark = this.dark
+      const mid = dark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'
+      return {
+        backgroundColor: inactive ? (dark ? 'rgba(0,0,0,0.4)' : 'rgba(0,0,0,0.05)') : undefined,
+        borderTop: startOfHour ? undefined : '1px dashed ' + mid
+      }
+    },
+    past (interval) {
+      return {
+        backgroundColor: interval.past ? (this.dark ? 'rgba(0,0,0,0.4)' : 'rgba(0,0,0,0.05)') : undefined
+      }
+    }
+  }
   export default {
     data: () => ({
-      today: '2019-01-08',
-      events: [
-        {
-          title: 'Random lesson ',
-          date: '2019-01-07',
-          time: '09:00',
-          duration: 90
-        },
-        {
-          title: 'Random lesson 2',
-          date: '2019-01-10',
-          time: '11:00',
-          duration: 90
-        },
-        {
-          title: 'Random lesson 2',
-          date: '2019-01-11',
-          time: '11:00',
-          duration: 90
-        },
-                {
-          title: 'Random lesson 2',
-          date: '2019-01-12',
-          time: '15:30',
-          duration: 90
-        },
-      ]
+      dark: false,
+      startMenu: false,
+      start: new Date().toJSON().slice(0,10),
+      endMenu: false,
+      end: '2019-12-25',
+      nowMenu: false,
+      minWeeks: 1,
+      now: null,
+      type: 'month',
+      typeOptions: [
+        { text: 'Day', value: 'day' },
+        { text: 'Week', value: 'week' },
+        { text: 'Month', value: 'month' },
+      ],
+      weekdays: weekdaysDefault,
+      weekdaysOptions: [
+        { text: 'Mon - Fri', value: [1, 2, 3, 4, 5] },
+        { text: 'Mon - Sun', value: [1, 2, 3, 4, 5, 6, 0] }
+      ],
+      intervals: intervalsDefault,
+      intervalsOptions: [
+        { text: 'Default', value: intervalsDefault },
+        { text: 'Workday', value: { first: 16, minutes: 30, count: 20, height: 40 } }
+      ],
+      maxDays: 7,
+      maxDaysOptions: [
+        { text: '7 days', value: 7 },
+        { text: '5 days', value: 5 },
+        { text: '4 days', value: 4 },
+        { text: '3 days', value: 3 }
+      ],
+      styleInterval: 'default',
+      styleIntervalOptions: [
+        { text: 'Default', value: 'default' },
+        { text: 'Workday', value: 'workday' },
+        { text: 'Past', value: 'past' }
+      ],
+      color: 'primary',
+      colorOptions: [
+        { text: 'Primary', value: 'primary' },       
+        { text: 'Red', value: 'red' },       
+        { text: 'Blue', value: 'blue' },       
+        { text: 'Green', value: 'green' },        
+      ],
+      events: []
     }),
     computed: {
-      // convert the list of events into a map of lists keyed by date
-      eventsMap () {
+      intervalStyle () {
+        return stylings[ this.styleInterval ].bind(this)
+      },
+      hasIntervals () {
+        return this.type in {
+          'week': 1, 'day': 1, '4day': 1, 'custom-daily': 1
+        }
+      },
+      hasEnd () {
+        return this.type in {
+          'custom-weekly': 1, 'custom-daily': 1
+        }
+      },
+        eventsMap () {
         const map = {}
         this.events.forEach(e => (map[e.date] = map[e.date] || []).push(e))
         return map
       }
     },
-    mounted () {
-      this.$refs.calendar.scrollToTime('08:00')
-    },
+    created () {
+      // In the url instead of 1 should be student id
+      axios.get(`api/lectures/1`)
+      .then(response => {
+        // JSON responses are automatically parsed.
+        this.events = response.data
+        this.events.forEach(element => {
+          element.date = element.start.substring(0,10);
+          if (element.details.includes('Teorinė')) {
+            element.color = 'red'
+          } else if (element.details.includes('Praktinė')) {
+            element.color = 'blue'
+          } else {
+            element.color = 'green'
+          }
+          element.lectureDuration = Math.floor((Math.abs(new Date(element.start) - new Date(element.finish))/1000)/60);
+        });
+      })
+      .catch(e => {
+        this.errors.push(e)
+      })
+   },
     methods: {
+      showIntervalLabel (interval) {
+        return interval.minute === 0
+      },
       open (event) {
-        alert(event.title)
+
       }
     }
   }
+  
 </script>
 
+
 <style lang="stylus" scoped>
-  .my-event {
-    overflow: auto;
+  .feature-pane {
+    position: relative;
+    padding-top: 30px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.3);
+  }
+  .day-header {
+    margin: 0px 2px 2px 2px;
+    padding: 2px 6px;
+    background-color: #1867c0;
+    color: #ffffff;
+    border: 1px solid #1867c0;
+    border-radius: 2px;
+    user-select: none;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+  }
+  .day-body {
+    position: absolute;
+    top: 400px;
+    height: 36px;
+    margin: 2px;
+    padding: 2px 6px;
+    background-color: #1867c0;
+    color: #ffffff;
+    border: 1px solid #1867c0;
+    border-radius: 2px;
+    left: 0;
+    right: 0;
+    user-select: none;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+  }
+  .day {
+    position: relative;
+    height: 24px;
+    margin: 0px;
+    padding: 0px 6px;
+    background-color: #1867c0;
+    color: #ffffff;
+    border: 1px solid #1867c0;
+    border-radius: 2px;
+    left: 0;
+    right: 0;
+    user-select: none;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+  }
+  .my-eventTime {
+    overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
     border-radius: 2px;
@@ -113,6 +462,7 @@
     left: 4px;
     margin-right: 8px;
     position: relative;
+
     &.with-time {
       position: absolute;
       right: 4px;
