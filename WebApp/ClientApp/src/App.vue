@@ -26,6 +26,10 @@
       <v-spacer></v-spacer>
       <Registration v-if="!isLoggedIn()" right/>
       <DialogTest v-if="!isLoggedIn()" right/>
+      <v-btn v-if="isLoggedIn()" flat large icon>
+      <v-icon>account_circle</v-icon>
+      Jonas Jonaitis 
+      </v-btn>
       <v-btn v-if="isLoggedIn()" icon @click.stop="logout">
         <v-icon>exit_to_app</v-icon>
       </v-btn>
@@ -42,7 +46,7 @@
   </v-app>
 </template>
 
-<script lang="ts">
+<script lang="js">
 import { Component, Vue } from 'vue-property-decorator';
 import DialogTest from './views/DialogTest.vue'; // @ is an alias to /src
 import Registration from './views/Registration.vue';
@@ -88,6 +92,13 @@ export default class App extends Vue {
   isLoggedIn()
   {
     return localStorage.getItem("user");
+  }
+
+  getUser()
+  {
+    let localStorageItem = JSON.parse(localStorage.getItem("user"));
+    console.log(localStorageItem.name)
+
   }
 }
 

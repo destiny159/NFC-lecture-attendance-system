@@ -12220,23 +12220,23 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\Rocco\\.nuget\\packages\\": {},
+    "C:\\Users\\ernje\\.nuget\\packages\\": {},
     "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder": {}
   },
   "project": {
     "version": "1.0.4",
     "restore": {
-      "projectUniqueName": "D:\\Documents\\GitHub\\NFC\\WebApp\\NFCSystem.csproj",
+      "projectUniqueName": "C:\\Users\\ernje\\NFC-lecture-attendance-system-4\\WebApp\\NFCSystem.csproj",
       "projectName": "NFCSystem",
-      "projectPath": "D:\\Documents\\GitHub\\NFC\\WebApp\\NFCSystem.csproj",
-      "packagesPath": "C:\\Users\\Rocco\\.nuget\\packages\\",
-      "outputPath": "D:\\Documents\\GitHub\\NFC\\WebApp\\obj\\",
+      "projectPath": "C:\\Users\\ernje\\NFC-lecture-attendance-system-4\\WebApp\\NFCSystem.csproj",
+      "packagesPath": "C:\\Users\\ernje\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\ernje\\NFC-lecture-attendance-system-4\\WebApp\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
       ],
       "configFilePaths": [
-        "C:\\Users\\Rocco\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\ernje\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
