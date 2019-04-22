@@ -29,6 +29,8 @@
 import { Component, Vue } from 'vue-property-decorator';
 import { NfcScan } from '../models/NfcScan';
 import axios from 'axios';
+import '../components/login/auth-header';
+import { authHeader } from '../components/login/auth-header';
 
 @Component({})
 export default class FetchDataView extends Vue {
@@ -45,7 +47,8 @@ export default class FetchDataView extends Vue {
   }
 
   private fetcNfc() {
-    axios.get<NfcScan[]>('api/nfcscan/getscans')
+    const headers = {...authHeader()};
+    axios.get<NfcScan[]>('api/nfcscan/getscans',{headers:headers})
       .then((response) => {
         this.scans = response.data;
         this.loading = false;

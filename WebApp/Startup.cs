@@ -75,7 +75,7 @@ namespace NFCSystem
                 };
             });
 
-            services.AddDbContext<NFCScanContext>(options => options.UseMySql(Configuration.GetConnectionString("DefaultConnection")));
+            //services.AddDbContext<NFCScanContext>(options => options.UseMySql(Configuration.GetConnectionString("DefaultConnection")));
 
             services.Configure<IdentityOptions>(options =>
             {

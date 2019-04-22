@@ -11,7 +11,7 @@
 #include <ArduinoJson.h>
 
 #define DEBUG
-#define EDUROAM
+//#define EDUROAM
 
 
 // NFC reader object, uses pins defined in defines.h
@@ -50,7 +50,7 @@ void loop(void) {
     startHearbeat = millis();
     printHearBeat();
   }
-  if(millis() - start >= 1000)
+  if(millis() - start >= 250)
   {
     againLine = true;
     start = millis();
@@ -62,13 +62,13 @@ void loop(void) {
   {
     String json;
     uint32_t cardUid = uid[0] + (uid[1] << 8) + (uid[2] << 16) + (uid[3] << 24);
-    time_t timestamp = getCurrentTimestamp();
+    // time_t timestamp = getCurrentTimestamp();
     StaticJsonDocument<200> doc;
     char timeString[32] = "ABXDSFS";
     printLocalTime(timeString);
     doc["UID"] = cardUid;
     doc["DeviceID"] = DEVICE_ID;
-    doc["TimeStamp"] = timestamp;
+    doc["TimeStamp"] = timeString;
     serializeJson(doc, json);
     serializeJsonPretty(doc, Serial);
     Serial.println();
@@ -114,7 +114,7 @@ bool sendPOSTRequest(String messageJson)
   // Configure traget server url
   Serial.print("[HTTP] begin...\n");
   http.begin(API_ENDPOINT); 
-  http.setTimeout(5000);
+  http.setTimeout(3500);
   http.addHeader("Content-Type", "application/json");
 
   // start connection and send HTTP header
@@ -140,7 +140,7 @@ bool sendPOSTRequest(String messageJson)
   } 
   else 
   {
-    Serial.printf("[HTTP] GET... failed, error: %s\n", http.errorToString(httpCode).c_str());
+    Serial.printf("[HTTP] POST... failed, error: %s\n", http.errorToString(httpCode).c_str());
     beep(4, 100);
     return false;
   }
@@ -193,7 +193,8 @@ bool printLocalTime(char s[])
     return false;
   }
   //Serial.println(&timeinfo, "%A, %B %d %Y %H:%M:%S");
-  strftime(s,32,"%A, %B %d %Y %H:%M:%S", &timeinfo);
+  //strftime(s,32,"%A, %B %d %Y %H:%M:%S", &timeinfo);
+  strftime(s,32,"%Y-%m-%d %H:%M:%S", &timeinfo);
   //Serial.println(timeStr);
   return true;
 }
@@ -203,9 +204,10 @@ void wifiConnect()
 {
   WiFi.disconnect(true);  //disconnect form wifi to set new wifi connection
   WiFi.mode(WIFI_STA); //init wifi mode
-  Serial.printf("Connecting to %s ", EAP_SSID);
+  
 
   #ifdef EDUROAM
+    Serial.printf("Connecting to %s ", EAP_SSID);
     //esp_wifi_sta_wpa2_ent_set_identity((uint8_t *)EAP_IDENTITY, strlen(EAP_IDENTITY)); //provide identity
     esp_wifi_sta_wpa2_ent_set_username((uint8_t *)EAP_IDENTITY, strlen(EAP_IDENTITY)); //provide username --> identity and username is same
     esp_wifi_sta_wpa2_ent_set_password((uint8_t *)EAP_PASSWORD, strlen(EAP_PASSWORD)); //provide password
@@ -213,6 +215,7 @@ void wifiConnect()
     esp_wifi_sta_wpa2_ent_enable(&config); //set config settings to enable function
     WiFi.begin(EAP_SSID);
   #else
+    Serial.printf("Connecting to %s ", SSID);
     WiFi.begin(SSID, PASSWD);
   #endif // EDUROAM
 

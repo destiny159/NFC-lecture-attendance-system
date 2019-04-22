@@ -1,5 +1,5 @@
 <template>
-  <v-layout wrap>
+  <v-layout>
     <v-flex
       sm12
       lg3
@@ -177,7 +177,7 @@
       lg9
       class="pl-3 mt-2"
     >
-      <v-sheet height="500">
+      <v-sheet height="85vh">
         <v-calendar
           ref="calendar"
           v-model="start"

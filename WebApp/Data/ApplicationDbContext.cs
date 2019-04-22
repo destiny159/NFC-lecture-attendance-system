@@ -12,6 +12,7 @@ namespace NFCSystem.Data
 {
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
+        public DbSet<NFCScan> NFCScans { get; set; }
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
         {
@@ -21,6 +22,7 @@ namespace NFCSystem.Data
             // Customize the ASP.NET Identity model and override the defaults if needed.
             // For example, you can rename the ASP.NET Identity table names and more.
             // Add your customizations after calling base.OnModelCreating(builder);
+            base.OnModelCreating(builder);
             builder.Entity<ApplicationUser>(entity => {
                 entity.Property(m => m.Email).HasMaxLength(127);
                 entity.Property(m => m.NormalizedEmail).HasMaxLength(127);
@@ -49,7 +51,6 @@ namespace NFCSystem.Data
                 entity.Property(m => m.Name).HasMaxLength(127);
 
             });
-            base.OnModelCreating(builder);
         }
     }
 }

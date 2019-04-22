@@ -8,8 +8,12 @@
 #define SPEAKER         (25)
 
 // WiFi settings
-#define SSID            "DESKTOP-A4GI4HB"
-#define PASSWD          "bigbang123"
+// #define SSID            "DESKTOP-A4GI4HB"
+// #define PASSWD          "bigbang123"
+#define SSID               "Redmi111"
+#define PASSWD             "abcabc123"
+//#define SSID               "DESKTOP"
+//#define PASSWD             "123456789"
 
 // Eduroam wifi settings
 #define EAP_ANONYMOUS_IDENTITY  "anonymous@ktu.lt"
@@ -21,12 +25,13 @@
 // NTP server settings
 #define NTP_SERVER      "europe.pool.ntp.org"
 #define GTM_OFFSET      7200
-#define GTM_DAY_OFFSET  0
+#define GTM_DAY_OFFSET  3600
 
 // API settings
-// #define API_ENDPOINT    "http://ptsv2.com/t/je1wo-1552248829/post"
-//#define API_ENDPOINT  "http://lankomumas.duckdns.org:4430:/api/nfcscan/postscan"
-#define API_ENDPOINT    "http://192.168.0.101:4430/api/nfcscan/postscan"
+// #define API_ENDPOINT   "http://ptsv2.com/t/je1wo-1552248829/post"
+//#define API_ENDPOINT    "http://lankomumas.duckdns.org:4430:/api/nfcscan/postscan"
+//#define API_ENDPOINT    "http://192.168.0.101:4430/api/nfcscan/postscan"
+#define API_ENDPOINT      "http://192.168.43.119:4430/api/nfcscan/postscan"
 
 // Device config
 #define DEVICE_ID 0x0001

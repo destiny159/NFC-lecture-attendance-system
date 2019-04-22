@@ -1,3 +1,4 @@
+using System;
 using System.ComponentModel.DataAnnotations;
 namespace NFCSystem.Models
 {
@@ -9,8 +10,8 @@ namespace NFCSystem.Models
         [Required]
         public long UID {get;set;}
         [Required]
-        public long TimeStamp {get;set;}
+        public DateTime TimeStamp {get;set;}
         [Required]
-        public string StudId{get;set;}
+        public int DeviceID {get;set;}
     }
 }
