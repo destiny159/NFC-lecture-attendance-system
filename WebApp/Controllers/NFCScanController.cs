@@ -36,8 +36,8 @@ namespace NFCSystem.Controllers
         public async Task<ActionResult<NFCScan>> GetScan(long id)
         {
         var todoItem = await _context.NFCScans.FindAsync(id);
-        var student = await _context.Users.FirstOrDefaultAsync(x => x.UID == todoItem.UID);
-        var restult = new {scan = todoItem, stud = student};
+        //var student = await _context.Users.FirstOrDefaultAsync(x => x.UID == todoItem.UID);
+        var restult = new {scan = todoItem/* , stud = student*/};
         if (todoItem == null)
         {
             return NotFound();

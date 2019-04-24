@@ -12227,11 +12227,11 @@
   "project": {
     "version": "1.0.4",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Vilius\\Desktop\\NFC-lecture-attendance-system-master\\WebApp\\NFCSystem.csproj",
+      "projectUniqueName": "C:\\Users\\Vilius\\Documents\\GitHub\\NFC-lecture-attendance-system\\WebApp\\NFCSystem.csproj",
       "projectName": "NFCSystem",
-      "projectPath": "C:\\Users\\Vilius\\Desktop\\NFC-lecture-attendance-system-master\\WebApp\\NFCSystem.csproj",
+      "projectPath": "C:\\Users\\Vilius\\Documents\\GitHub\\NFC-lecture-attendance-system\\WebApp\\NFCSystem.csproj",
       "packagesPath": "C:\\Users\\Vilius\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Vilius\\Desktop\\NFC-lecture-attendance-system-master\\WebApp\\obj\\",
+      "outputPath": "C:\\Users\\Vilius\\Documents\\GitHub\\NFC-lecture-attendance-system\\WebApp\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"

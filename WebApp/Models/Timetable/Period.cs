@@ -1,6 +1,6 @@
 using System;
 using System.ComponentModel.DataAnnotations;
-namespace WebApp.Models.Timetable
+namespace NFCSystem.Models.Timetable
 {
     public class Period
     {

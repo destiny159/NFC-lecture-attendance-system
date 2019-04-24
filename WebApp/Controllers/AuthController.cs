@@ -35,11 +35,10 @@ namespace JwtAuthentication.Controllers
                 UserName = model.UserName,
                 Name = model.Name,
                 Surname = model.Surname,
-                Group = model.Group,
-                StudentCode = model.StudentCode.ToUpper(),
-                UID = model.UID,
                 Email = model.Email,
-                SecurityStamp = Guid.NewGuid().ToString()
+                SecurityStamp = Guid.NewGuid().ToString(),
+                Student = new Student{UID = model.UID, Group = model.Group, StudentCode = model.StudentCode}
+                
             };
             var result = await _userManager.CreateAsync(user, model.Password);
             if (result.Succeeded)

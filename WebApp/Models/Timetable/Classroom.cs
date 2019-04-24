@@ -6,5 +6,6 @@ namespace NFCSystem.Models.Timetable
     {
         public int ClassroomId {get;set;}
         public string ClassLabel {get;set;}
+        public string ClassLocation {get;set;}
     }
 }
