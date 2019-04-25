@@ -23,5 +23,16 @@ namespace NFCSystem.Models.Timetables
         public Classroom Classroom {get;set;}
 
         public bool isVisited {get;set;}
+
+        public DateTime Date {get;set;}
+
+        public Types LectureType {get;set;}
+
+        public enum Types
+        {
+            Laborai,
+            Teorija,
+            Pratybos
+        }
     }
 }

@@ -92,7 +92,31 @@ namespace NFCSystem.Data
             builder.Entity<Timetable>().HasOne<Period>(p => p.Period).WithMany(t => t.Timetables).HasForeignKey(k => k.PeriodId);
             builder.Entity<Timetable>().HasOne<Classroom>(c => c.Classroom).WithMany(t => t.Timetables).HasForeignKey(k => k.ClassroomId);
             builder.Entity<Timetable>().HasOne<ApplicationUser>(s => s.ApplicationUser).WithMany(t => t.Timetables).HasForeignKey(k => k.StudentId);
-            //builder.Entity<Timetable>( e => e.HasData(new Timetable{TimetableId=1, PeriodId=1});
+            builder.Entity<Timetable>().Property(p => p.LectureType).HasConversion<string>();
+            builder.Entity<Timetable>().Property(p => p.Date).HasColumnType("Date");
+            builder.Entity<Timetable>( e => 
+            {
+                e.HasData(new Timetable{TimetableId=1, CourseId="PB0000", PeriodId=1, 
+                    StudentId="a18be9c0-aa65-4af8-bd17-00bd93440001", ClassroomId=9999, Date=new DateTime(2019,04,30), isVisited=false});
+                e.HasData(new Timetable{TimetableId=2, CourseId="PB0001", PeriodId=2, 
+                    StudentId="a18be9c0-aa65-4af8-bd17-00bd93440001", ClassroomId=3, Date=new DateTime(2019,04,30), isVisited=false});
+                e.HasData(new Timetable{TimetableId=3, CourseId="PB0002", PeriodId=3, 
+                    StudentId="a18be9c0-aa65-4af8-bd17-00bd93440001", ClassroomId=5, Date=new DateTime(2019,04,30), isVisited=false});
+                e.HasData(new Timetable{TimetableId=4, CourseId="PB0002", PeriodId=4, 
+                    StudentId="a18be9c0-aa65-4af8-bd17-00bd93440001", ClassroomId=3, Date=new DateTime(2019,04,30), isVisited=false});
+                e.HasData(new Timetable{TimetableId=5, CourseId="PB0001", PeriodId=5, 
+                    StudentId="a18be9c0-aa65-4af8-bd17-00bd93440001", ClassroomId=3, Date=new DateTime(2019,04,30), isVisited=false});
+                e.HasData(new Timetable{TimetableId=6, CourseId="PB0005", PeriodId=1, 
+                    StudentId="a18be9c0-aa65-4af8-bd17-00bd93440001", ClassroomId=5, Date=new DateTime(2019,04,26), isVisited=false});
+                e.HasData(new Timetable{TimetableId=7, CourseId="PB0004", PeriodId=5, 
+                    StudentId="a18be9c0-aa65-4af8-bd17-00bd93440001", ClassroomId=4, Date=new DateTime(2019,04,28), isVisited=false});
+                e.HasData(new Timetable{TimetableId=8, CourseId="PB0005", PeriodId=5, 
+                    StudentId="a18be9c0-aa65-4af8-bd17-00bd93440001", ClassroomId=13, Date=new DateTime(2019,04,27), isVisited=false});
+                e.HasData(new Timetable{TimetableId=9, CourseId="PB0001", PeriodId=5, 
+                    StudentId="a18be9c0-aa65-4af8-bd17-00bd93440001", ClassroomId=4, Date=new DateTime(2019,04,25), isVisited=false});
+                e.HasData(new Timetable{TimetableId=10, CourseId="PB0001", PeriodId=5, 
+                    StudentId="a18be9c0-aa65-4af8-bd17-00bd93440002", ClassroomId=5, Date=new DateTime(2019,04,29), isVisited=false});
+            });
 
             // Configuration for Identity framework
             builder.Entity<ApplicationUser>(entity => {
