@@ -22,6 +22,7 @@ namespace NFCSystem.Data
         public DbSet<Period> Periods {get;set;}
         public DbSet<Course> Courses {get;set;}
         public DbSet<Classroom> Classrooms {get;set;}
+        public DbSet<IdentityUserRole<string>> IdentityUserRoles {get;set;}
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
