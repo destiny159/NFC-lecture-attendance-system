@@ -49,7 +49,7 @@ namespace JwtAuthentication.Controllers
             var result = await _userManager.CreateAsync(user, model.Password);
             if (result.Succeeded)
             {
-                await _userManager.AddToRoleAsync(user, "USER");
+                await _userManager.AddToRoleAsync(user, "ADMIN");
             }
             return Ok(new { Username = user.UserName });
         }
