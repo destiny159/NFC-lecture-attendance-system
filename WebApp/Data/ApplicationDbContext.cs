@@ -9,7 +9,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Pomelo.EntityFrameworkCore.MySql;
 using NFCSystem.Models;
-using NFCSystem.Models.Timetable;
+using NFCSystem.Models.Timetables;
 using Microsoft.Extensions.Identity.Core;
 
 
@@ -22,6 +22,7 @@ namespace NFCSystem.Data
         public DbSet<Period> Periods {get;set;}
         public DbSet<Course> Courses {get;set;}
         public DbSet<Classroom> Classrooms {get;set;}
+        public DbSet<Timetable>  Timetables {get;set;}
         public DbSet<IdentityUserRole<string>> IdentityUserRoles {get;set;}
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
@@ -83,6 +84,15 @@ namespace NFCSystem.Data
             builder.Entity<Device>().HasData(new Device{DeviceId=4,DeviceIdReal=4, ClassroomId=9999});
             builder.Entity<Device>().HasData(new Device{DeviceId=5,DeviceIdReal=5, ClassroomId=9999});
             builder.Entity<Device>().HasData(new Device{DeviceId=6,DeviceIdReal=6, ClassroomId=9999});
+            
+            // Configuration for Timetables
+            builder.Entity<Timetable>().HasKey(k => k.TimetableId);
+            builder.Entity<Timetable>().Property(p => p.isVisited);
+            builder.Entity<Timetable>().HasOne<Course>(c => c.Course).WithMany(t => t.Timetables).HasForeignKey(k => k.CourseId);
+            builder.Entity<Timetable>().HasOne<Period>(p => p.Period).WithMany(t => t.Timetables).HasForeignKey(k => k.PeriodId);
+            builder.Entity<Timetable>().HasOne<Classroom>(c => c.Classroom).WithMany(t => t.Timetables).HasForeignKey(k => k.ClassroomId);
+            builder.Entity<Timetable>().HasOne<ApplicationUser>(s => s.ApplicationUser).WithMany(t => t.Timetables).HasForeignKey(k => k.StudentId);
+            //builder.Entity<Timetable>( e => e.HasData(new Timetable{TimetableId=1, PeriodId=1});
 
             // Configuration for Identity framework
             builder.Entity<ApplicationUser>(entity => {

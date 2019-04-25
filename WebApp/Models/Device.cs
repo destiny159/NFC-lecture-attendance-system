@@ -1,6 +1,6 @@
 using System;
 using System.ComponentModel.DataAnnotations;
-using NFCSystem.Models.Timetable;
+using NFCSystem.Models.Timetables;
 namespace NFCSystem.Models
 {
     public class Device
