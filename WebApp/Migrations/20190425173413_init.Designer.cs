@@ -9,8 +9,8 @@ using NFCSystem.Data;
 namespace NFCSystem.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20190424230452_Mig1")]
-    partial class Mig1
+    [Migration("20190425173413_init")]
+    partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -45,21 +45,21 @@ namespace NFCSystem.Migrations
                         new
                         {
                             Id = "STUDENT",
-                            ConcurrencyStamp = "c3c59910-530f-4032-bb20-c3c0e137f143",
+                            ConcurrencyStamp = "3a9e380e-f1dc-445c-a758-cdb71cedcaad",
                             Name = "STUDENT",
                             NormalizedName = "STUDENT"
                         },
                         new
                         {
                             Id = "ADMIN",
-                            ConcurrencyStamp = "bd2ea071-a73e-4400-9b64-f38be7d3f2c4",
+                            ConcurrencyStamp = "b995146c-2f95-4102-a34e-84925468e391",
                             Name = "ADMIN",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
                             Id = "LECTURER",
-                            ConcurrencyStamp = "1010386c-eb8f-4d23-9791-f2ba844df938",
+                            ConcurrencyStamp = "735897fe-eca2-47ba-a7f6-8bd2ce752f7c",
                             Name = "LECTURER",
                             NormalizedName = "LECTURER"
                         });
@@ -171,6 +171,8 @@ namespace NFCSystem.Migrations
 
                     b.Property<bool>("EmailConfirmed");
 
+                    b.Property<string>("Group");
+
                     b.Property<bool>("LockoutEnabled");
 
                     b.Property<DateTimeOffset?>("LockoutEnd");
@@ -191,11 +193,13 @@ namespace NFCSystem.Migrations
 
                     b.Property<string>("SecurityStamp");
 
-                    b.Property<int>("StudentId");
+                    b.Property<string>("StudentCode");
 
                     b.Property<string>("Surname");
 
                     b.Property<bool>("TwoFactorEnabled");
+
+                    b.Property<long>("UID");
 
                     b.Property<string>("UserName")
                         .HasMaxLength(256);
@@ -209,22 +213,21 @@ namespace NFCSystem.Migrations
                         .IsUnique()
                         .HasName("UserNameIndex");
 
-                    b.HasIndex("StudentId")
-                        .IsUnique();
-
                     b.ToTable("AspNetUsers");
                 });
 
             modelBuilder.Entity("NFCSystem.Models.Device", b =>
                 {
-                    b.Property<int>("ID")
+                    b.Property<int>("DeviceId")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<int>("ClassroomID");
+                    b.Property<int>("ClassroomId");
 
-                    b.Property<int>("DeviceID");
+                    b.Property<int>("DeviceIdReal");
 
-                    b.HasKey("ID");
+                    b.HasKey("DeviceId");
+
+                    b.HasIndex("ClassroomId");
 
                     b.ToTable("Devices");
                 });
@@ -245,22 +248,6 @@ namespace NFCSystem.Migrations
                     b.ToTable("NFCScans");
                 });
 
-            modelBuilder.Entity("NFCSystem.Models.Student", b =>
-                {
-                    b.Property<int>("StudentId")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<string>("Group");
-
-                    b.Property<string>("StudentCode");
-
-                    b.Property<long>("UID");
-
-                    b.HasKey("StudentId");
-
-                    b.ToTable("Student");
-                });
-
             modelBuilder.Entity("NFCSystem.Models.Timetable.Classroom", b =>
                 {
                     b.Property<int>("ClassroomId")
@@ -275,6 +262,12 @@ namespace NFCSystem.Migrations
                     b.ToTable("Classrooms");
 
                     b.HasData(
+                        new
+                        {
+                            ClassroomId = 9999,
+                            ClassLabel = "DummmyClassroom",
+                            ClassLocation = "Moon, in a far galaxy away"
+                        },
                         new
                         {
                             ClassroomId = 1,
@@ -490,11 +483,11 @@ namespace NFCSystem.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
-            modelBuilder.Entity("NFCSystem.Models.ApplicationUser", b =>
+            modelBuilder.Entity("NFCSystem.Models.Device", b =>
                 {
-                    b.HasOne("NFCSystem.Models.Student", "Student")
-                        .WithOne("ApplicationUser")
-                        .HasForeignKey("NFCSystem.Models.ApplicationUser", "StudentId")
+                    b.HasOne("NFCSystem.Models.Timetable.Classroom", "Classroom")
+                        .WithMany("Devices")
+                        .HasForeignKey("ClassroomId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 #pragma warning restore 612, 618

@@ -41,9 +41,9 @@ namespace NFCSystem.Migrations
                     LockoutEnd = table.Column<DateTimeOffset>(nullable: true),
                     LockoutEnabled = table.Column<bool>(nullable: false),
                     AccessFailedCount = table.Column<int>(nullable: false),
-                    UID = table.Column<long>(nullable: false),
                     Name = table.Column<string>(nullable: true),
                     Surname = table.Column<string>(nullable: true),
+                    UID = table.Column<long>(nullable: false),
                     Group = table.Column<string>(nullable: true),
                     StudentCode = table.Column<string>(nullable: true)
                 },
@@ -76,20 +76,6 @@ namespace NFCSystem.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Courses", x => x.CourseId);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Devices",
-                columns: table => new
-                {
-                    ID = table.Column<int>(nullable: false)
-                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    DeviceID = table.Column<int>(nullable: false),
-                    ClassroomID = table.Column<int>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Devices", x => x.ID);
                 });
 
             migrationBuilder.CreateTable(
@@ -227,14 +213,34 @@ namespace NFCSystem.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "Devices",
+                columns: table => new
+                {
+                    DeviceId = table.Column<int>(nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    DeviceIdReal = table.Column<int>(nullable: false),
+                    ClassroomId = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Devices", x => x.DeviceId);
+                    table.ForeignKey(
+                        name: "FK_Devices_Classrooms_ClassroomId",
+                        column: x => x.ClassroomId,
+                        principalTable: "Classrooms",
+                        principalColumn: "ClassroomId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.InsertData(
                 table: "AspNetRoles",
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
                 values: new object[,]
                 {
-                    { "STUDENT", "5eb9a877-7640-476d-981a-ab27879b26e6", "STUDENT", "STUDENT" },
-                    { "ADMIN", "57dc4995-14c8-41ea-af04-472854a11fc9", "ADMIN", "ADMIN" },
-                    { "LECTURER", "582d4f48-c142-4b20-9c11-f7f32e0f31b3", "LECTURER", "LECTURER" }
+                    { "STUDENT", "3a9e380e-f1dc-445c-a758-cdb71cedcaad", "STUDENT", "STUDENT" },
+                    { "ADMIN", "b995146c-2f95-4102-a34e-84925468e391", "ADMIN", "ADMIN" },
+                    { "LECTURER", "735897fe-eca2-47ba-a7f6-8bd2ce752f7c", "LECTURER", "LECTURER" }
                 });
 
             migrationBuilder.InsertData(
@@ -244,16 +250,17 @@ namespace NFCSystem.Migrations
                 {
                     { 14, "108", "B2" },
                     { 13, "103KL", "IX" },
-                    { 11, "103AB", "IX" },
+                    { 12, "103CD", "IX" },
                     { 10, "153", "XII" },
                     { 9, "152", "XII" },
                     { 7, "151", "XII" },
-                    { 12, "103CD", "IX" },
+                    { 11, "103AB", "IX" },
                     { 5, "215", "XI" },
                     { 4, "518", "XI" },
                     { 3, "103", "XI" },
                     { 2, "102", "XI" },
                     { 1, "101", "XI" },
+                    { 9999, "DummmyClassroom", "Moon, in a far galaxy away" },
                     { 6, "150", "XII" }
                 });
 
@@ -265,9 +272,9 @@ namespace NFCSystem.Migrations
                     { "PB0005", "Anglų kalba" },
                     { "PB0004", "Programavimo kalbų teorija" },
                     { "PB0003", "Programų sistemų inžinerija" },
-                    { "PB0002", "Semestro projektas" },
+                    { "PB0001", "Duomenų bazės" },
                     { "PB0000", "Algoritmų analizė ir sudarymas" },
-                    { "PB0001", "Duomenų bazės" }
+                    { "PB0002", "Semestro projektas" }
                 });
 
             migrationBuilder.InsertData(
@@ -318,6 +325,11 @@ namespace NFCSystem.Migrations
                 table: "AspNetUsers",
                 column: "NormalizedUserName",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Devices_ClassroomId",
+                table: "Devices",
+                column: "ClassroomId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -338,9 +350,6 @@ namespace NFCSystem.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "Classrooms");
-
-            migrationBuilder.DropTable(
                 name: "Courses");
 
             migrationBuilder.DropTable(
@@ -357,6 +366,9 @@ namespace NFCSystem.Migrations
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
+
+            migrationBuilder.DropTable(
+                name: "Classrooms");
         }
     }
 }

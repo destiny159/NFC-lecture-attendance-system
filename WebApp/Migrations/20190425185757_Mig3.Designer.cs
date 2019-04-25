@@ -9,8 +9,8 @@ using NFCSystem.Data;
 namespace NFCSystem.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20190424223201_init")]
-    partial class init
+    [Migration("20190425185757_Mig3")]
+    partial class Mig3
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -45,21 +45,21 @@ namespace NFCSystem.Migrations
                         new
                         {
                             Id = "STUDENT",
-                            ConcurrencyStamp = "5eb9a877-7640-476d-981a-ab27879b26e6",
+                            ConcurrencyStamp = "2f6a805b-61aa-4344-98b9-a6ce12079951",
                             Name = "STUDENT",
                             NormalizedName = "STUDENT"
                         },
                         new
                         {
                             Id = "ADMIN",
-                            ConcurrencyStamp = "57dc4995-14c8-41ea-af04-472854a11fc9",
+                            ConcurrencyStamp = "8f1ea878-efe2-4a5e-b77e-36d1c037b1f4",
                             Name = "ADMIN",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
                             Id = "LECTURER",
-                            ConcurrencyStamp = "582d4f48-c142-4b20-9c11-f7f32e0f31b3",
+                            ConcurrencyStamp = "9c55b54d-9658-4b1a-94d2-f07cfc0884f3",
                             Name = "LECTURER",
                             NormalizedName = "LECTURER"
                         });
@@ -136,6 +136,13 @@ namespace NFCSystem.Migrations
                     b.HasIndex("RoleId");
 
                     b.ToTable("AspNetUserRoles");
+
+                    b.HasData(
+                        new
+                        {
+                            UserId = "a18be9c0-aa65-4af8-bd17-00bd9344e575",
+                            RoleId = "STUDENT"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
@@ -214,20 +221,85 @@ namespace NFCSystem.Migrations
                         .HasName("UserNameIndex");
 
                     b.ToTable("AspNetUsers");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "a18be9c0-aa65-4af8-bd17-00bd9344e575",
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "fc865da9-bd62-4a69-b582-7180e7a4c8a8",
+                            Email = "vardenis.pavardenis@email.com",
+                            EmailConfirmed = false,
+                            Group = "IFF-6/9",
+                            LockoutEnabled = false,
+                            Name = "Vardenis",
+                            NormalizedEmail = "VARDENIS.PAVARDENIS@EMAIL.COM",
+                            NormalizedUserName = "VARVAV",
+                            PasswordHash = "AQAAAAEAACcQAAAAEB6C1+58Xu39M0aQhRD1Kohn5rYmk4G5x2Y2iv5PoBjSl2p6W0cu6DiTMZYVe2yBKQ==",
+                            PhoneNumberConfirmed = false,
+                            SecurityStamp = "2cbd3bfa-9b86-481d-8ffa-356f175a0560",
+                            StudentCode = "C0000",
+                            Surname = "Pavardenis",
+                            TwoFactorEnabled = false,
+                            UID = 25554654L,
+                            UserName = "varvav"
+                        });
                 });
 
             modelBuilder.Entity("NFCSystem.Models.Device", b =>
                 {
-                    b.Property<int>("ID")
+                    b.Property<int>("DeviceId")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<int>("ClassroomID");
+                    b.Property<int>("ClassroomId")
+                        .ValueGeneratedOnAdd()
+                        .HasDefaultValue(9999);
 
-                    b.Property<int>("DeviceID");
+                    b.Property<int>("DeviceIdReal");
 
-                    b.HasKey("ID");
+                    b.HasKey("DeviceId");
+
+                    b.HasIndex("ClassroomId");
 
                     b.ToTable("Devices");
+
+                    b.HasData(
+                        new
+                        {
+                            DeviceId = 1,
+                            ClassroomId = 3,
+                            DeviceIdReal = 1
+                        },
+                        new
+                        {
+                            DeviceId = 2,
+                            ClassroomId = 5,
+                            DeviceIdReal = 2
+                        },
+                        new
+                        {
+                            DeviceId = 3,
+                            ClassroomId = 13,
+                            DeviceIdReal = 3
+                        },
+                        new
+                        {
+                            DeviceId = 4,
+                            ClassroomId = 9999,
+                            DeviceIdReal = 4
+                        },
+                        new
+                        {
+                            DeviceId = 5,
+                            ClassroomId = 9999,
+                            DeviceIdReal = 5
+                        },
+                        new
+                        {
+                            DeviceId = 6,
+                            ClassroomId = 9999,
+                            DeviceIdReal = 6
+                        });
                 });
 
             modelBuilder.Entity("NFCSystem.Models.NFCScan", b =>
@@ -260,6 +332,12 @@ namespace NFCSystem.Migrations
                     b.ToTable("Classrooms");
 
                     b.HasData(
+                        new
+                        {
+                            ClassroomId = 9999,
+                            ClassLabel = "DummmyClassroom",
+                            ClassLocation = "Moon, in a far galaxy away"
+                        },
                         new
                         {
                             ClassroomId = 1,
@@ -472,6 +550,14 @@ namespace NFCSystem.Migrations
                     b.HasOne("NFCSystem.Models.ApplicationUser")
                         .WithMany()
                         .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("NFCSystem.Models.Device", b =>
+                {
+                    b.HasOne("NFCSystem.Models.Timetable.Classroom", "Classroom")
+                        .WithMany("Devices")
+                        .HasForeignKey("ClassroomId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 #pragma warning restore 612, 618

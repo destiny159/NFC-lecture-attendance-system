@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using Pomelo.EntityFrameworkCore.MySql;
 using NFCSystem.Models;
 using NFCSystem.Models.Timetable;
+using Microsoft.Extensions.Identity.Core;
 
 
 namespace NFCSystem.Data
@@ -38,6 +39,7 @@ namespace NFCSystem.Data
             builder.Entity<Period>().HasData(new Period{PeriodId=4, PeriodStartTime=new TimeSpan(15,30,0), PeriodEndTime=new TimeSpan(17,00,0)});
             builder.Entity<Period>().HasData(new Period{PeriodId=5, PeriodStartTime=new TimeSpan(17,30,0), PeriodEndTime=new TimeSpan(19,00,0)});
             #endif
+
             // Configuration for Courses
             builder.Entity<Course>().HasKey(k => k.CourseId);
             #if NEW_DB
@@ -51,7 +53,9 @@ namespace NFCSystem.Data
 
             //Configuration for Classrooms
             builder.Entity<Classroom>().HasKey(k => k.ClassroomId);
+            builder.Entity<Classroom>().HasMany<Device>(g => g.Devices).WithOne(s => s.Classroom).HasForeignKey(s => s.ClassroomId);
             #if NEW_DB
+            builder.Entity<Classroom>().HasData(new Classroom{ClassroomId=9999, ClassLabel="DummmyClassroom",ClassLocation="Moon, in a far galaxy away"});
             builder.Entity<Classroom>().HasData(new Classroom{ClassroomId=1, ClassLabel="101",ClassLocation="XI"});
             builder.Entity<Classroom>().HasData(new Classroom{ClassroomId=2, ClassLabel="102",ClassLocation="XI"});
             builder.Entity<Classroom>().HasData(new Classroom{ClassroomId=3, ClassLabel="103",ClassLocation="XI"});
@@ -67,9 +71,17 @@ namespace NFCSystem.Data
             builder.Entity<Classroom>().HasData(new Classroom{ClassroomId=14, ClassLabel="108",ClassLocation="B2"});
             #endif
 
-            // Configuration for Students
-            builder.Entity<Student>().HasKey(k => k.StudentId);
-            builder.Entity<Student>().HasOne<ApplicationUser>(u => u.ApplicationUser).WithOne(s => s.Student).HasForeignKey<ApplicationUser>(s => s.StudentId);
+            //Configuration for Device
+            builder.Entity<Device>().HasKey(k => k.DeviceId);
+            builder.Entity<Device>().Property(p => p.DeviceId).ValueGeneratedOnAdd();
+            builder.Entity<Device>().Property(p => p.ClassroomId).HasDefaultValue(9999);
+            //builder.Entity<Device>().HasOne<Classroom>(p => p.Classroom).WithMany(d => d.Devices).HasForeignKey<>(s => s.ClassroomId).OnDelete(DeleteBehavior.SetNull);
+            builder.Entity<Device>().HasData(new Device{DeviceId=1,DeviceIdReal=1, ClassroomId=3});
+            builder.Entity<Device>().HasData(new Device{DeviceId=2,DeviceIdReal=2, ClassroomId=5});
+            builder.Entity<Device>().HasData(new Device{DeviceId=3,DeviceIdReal=3, ClassroomId=13});
+            builder.Entity<Device>().HasData(new Device{DeviceId=4,DeviceIdReal=4, ClassroomId=9999});
+            builder.Entity<Device>().HasData(new Device{DeviceId=5,DeviceIdReal=5, ClassroomId=9999});
+            builder.Entity<Device>().HasData(new Device{DeviceId=6,DeviceIdReal=6, ClassroomId=9999});
 
             // Configuration for Identity framework
             builder.Entity<ApplicationUser>(entity => {
@@ -107,6 +119,44 @@ namespace NFCSystem.Data
                 entity.Property(m => m.Name).HasMaxLength(127);
 
             });
+
+            // Create seed users
+            var rnd = new Random();
+            var hasher = new PasswordHasher<ApplicationUser>();
+
+            for(int i = 1; i <= 100; i++)
+            {
+                string username = "varpav" + i.ToString("D3");
+                string name = "Vardas" + i.ToString("D3");
+                string surname = "Pavarde" + i.ToString("D3");; 
+                string email = name + "." + surname + i.ToString("D3") + "@email.com";
+                int uid = 100000000 + rnd.Next(1,99999999);
+                string group = string.Format("IFF-{0}/{1}", rnd.Next(1,10), rnd.Next(1,10));
+                string userId = "a18be9c0-aa65-4af8-bd17-00bd9344" + i.ToString("D4"); // Need 4 more chars
+
+                builder.Entity<ApplicationUser>().HasData(new ApplicationUser
+                {
+                    Id = userId,
+                    UserName = username,
+                    NormalizedUserName = username.ToUpper(),
+                    Name = name,
+                    Surname = surname,
+                    Email = email,
+                    NormalizedEmail = email.ToUpper(),
+                    SecurityStamp = Guid.NewGuid().ToString(),
+                    UID = uid,
+                    Group = group,
+                    StudentCode = "C" + i.ToString("D5"),
+                    PasswordHash = hasher.HashPassword(null, "Admin123++"),
+                });
+
+                builder.Entity<IdentityUserRole<string>>().HasData(new IdentityUserRole<string>
+                {
+                    RoleId = "STUDENT",
+                    UserId = userId
+                });
+            }
+
             base.OnModelCreating(builder);
         }
     }
