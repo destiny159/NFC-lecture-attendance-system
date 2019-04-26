@@ -17,7 +17,7 @@
               <td>{{ props.item.userName }}</td>
               <td>{{ props.item.name }}</td>
               <td>{{ props.item.surname }}</td>
-              <!--td>{{ props.item.group }}</td-->
+              <td>{{ props.item.group }}</td>
               <td>{{ props.item.studentCode }}</td>
               <td>{{ props.item.email }}</td>
               <td>{{ props.item.uid }}</td>
@@ -58,7 +58,7 @@ export default class FetchDataView extends Vue {
     { text: 'Prisijungimo vardas', value: 'userName' },
     { text: 'Vardas', value: 'name' },
     { text: 'Pavardė', value: 'surname' },
-    // { text: 'Grupė', value: 'group' },
+    { text: 'Grupė', value: 'group' },
     { text: 'Vidko', value: 'studentCode' },
     { text: 'El. Paštas', value: 'email' },
     { text: 'UID', value: 'uid'},
