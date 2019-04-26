@@ -4,14 +4,10 @@ namespace NFCSystem.Models
 {
     public class NFCScan
     {
-        [Required]
-        [KeyAttribute]
-        public long ScanID {get;set;}
-        [Required]
+        public int ScanId {get;set;}
         public long UID {get;set;}
-        [Required]
         public DateTime TimeStamp {get;set;}
-        [Required]
-        public int DeviceID {get;set;}
+
+        public int DeviceId {get;set;}
     }
 }

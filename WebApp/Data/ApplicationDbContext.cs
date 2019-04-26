@@ -28,7 +28,7 @@ namespace NFCSystem.Data
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
         {
-            
+
         }
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -78,13 +78,18 @@ namespace NFCSystem.Data
             builder.Entity<Device>().Property(p => p.DeviceId).ValueGeneratedOnAdd();
             builder.Entity<Device>().Property(p => p.ClassroomId).HasDefaultValue(9999);
             //builder.Entity<Device>().HasOne<Classroom>(p => p.Classroom).WithMany(d => d.Devices).HasForeignKey<>(s => s.ClassroomId).OnDelete(DeleteBehavior.SetNull);
-            builder.Entity<Device>().HasData(new Device{DeviceId=1,DeviceIdReal=1, ClassroomId=3});
-            builder.Entity<Device>().HasData(new Device{DeviceId=2,DeviceIdReal=2, ClassroomId=5});
-            builder.Entity<Device>().HasData(new Device{DeviceId=3,DeviceIdReal=3, ClassroomId=13});
-            builder.Entity<Device>().HasData(new Device{DeviceId=4,DeviceIdReal=4, ClassroomId=9999});
-            builder.Entity<Device>().HasData(new Device{DeviceId=5,DeviceIdReal=5, ClassroomId=9999});
-            builder.Entity<Device>().HasData(new Device{DeviceId=6,DeviceIdReal=6, ClassroomId=9999});
-            
+            builder.Entity<Device>().HasData(new Device{DeviceId=1,DeviceIdReal=1, PendingDeviceId=1, ClassroomId=3});
+            builder.Entity<Device>().HasData(new Device{DeviceId=2,DeviceIdReal=2, PendingDeviceId=2, ClassroomId=5});
+            builder.Entity<Device>().HasData(new Device{DeviceId=3,DeviceIdReal=3, PendingDeviceId=3, ClassroomId=13});
+            builder.Entity<Device>().HasData(new Device{DeviceId=4,DeviceIdReal=4, PendingDeviceId=4, ClassroomId=9999});
+            builder.Entity<Device>().HasData(new Device{DeviceId=5,DeviceIdReal=5, PendingDeviceId=5, ClassroomId=9999});
+            builder.Entity<Device>().HasData(new Device{DeviceId=6,DeviceIdReal=6, PendingDeviceId=6, ClassroomId=9999});
+            builder.Entity<Device>().HasData(new Device{DeviceId=7,DeviceIdReal=7, PendingDeviceId=7, ClassroomId=4});
+
+            // Configuration for NFCScans
+            builder.Entity<NFCScan>().HasKey(k => k.ScanId);
+            builder.Entity<NFCScan>().Property(p => p.ScanId).ValueGeneratedOnAdd();
+
             // Configuration for Timetables
             builder.Entity<Timetable>().HasKey(k => k.TimetableId);
             builder.Entity<Timetable>().Property(p => p.isVisited);

@@ -9,6 +9,7 @@
 #include "defines.h"
 #include "prototypes.h"
 #include <ArduinoJson.h>
+#include "EEPROM.h"
 
 #define DEBUG
 //#define EDUROAM
@@ -19,6 +20,10 @@ Adafruit_PN532 nfc(PN532_SCK, PN532_MISO, PN532_MOSI, PN532_SS);
 uint64_t start;
 uint64_t startHearbeat;
 bool againLine = false;
+
+
+// Functional Global variables
+String deviceId = "8";
 
 void setup(void) {
   // Setup pins
@@ -38,7 +43,7 @@ void setup(void) {
 }
 
 void loop(void) {
-  boolean success = false;
+  bool success = false;
   uint8_t uid[] = { 0, 0, 0, 0, 0, 0, 0 };	// Buffer to store the returned UID
   uint8_t uidLength;				                // Length of the UID (4 or 7 bytes depending on ISO14443A card type)
   
@@ -50,12 +55,13 @@ void loop(void) {
     startHearbeat = millis();
     printHearBeat();
   }
-  if(millis() - start >= 250)
+  if(millis() - start >= 500)
   {
     againLine = true;
     start = millis();
     success = nfc.readPassiveTargetID(PN532_MIFARE_ISO14443A, &uid[0], &uidLength);
     parserNFCResults(success, uid, uidLength);
+    pollSettingsGet();
   }
 
   if((WiFi.status() == WL_CONNECTED) && success) 
@@ -64,10 +70,10 @@ void loop(void) {
     uint32_t cardUid = uid[0] + (uid[1] << 8) + (uid[2] << 16) + (uid[3] << 24);
     // time_t timestamp = getCurrentTimestamp();
     StaticJsonDocument<200> doc;
-    char timeString[32] = "ABXDSFS";
+    char timeString[32] = "";
     printLocalTime(timeString);
     doc["UID"] = cardUid;
-    doc["DeviceID"] = DEVICE_ID;
+    doc["DeviceID"] = deviceId;
     doc["TimeStamp"] = timeString;
     serializeJson(doc, json);
     serializeJsonPretty(doc, Serial);
@@ -106,6 +112,51 @@ time_t getCurrentTimestamp()
   return mktime(&timeinfo);
 }
 
+bool pollSettingsGet()
+{
+  HTTPClient http;
+  String json;
+  String endpoint = API_ENDPOINT_POLL + deviceId;
+  Serial.println(endpoint);
+
+  // Configure traget server url
+  Serial.print("[HTTP] begin...\n");
+  http.begin(endpoint);
+  http.setTimeout(3500);
+
+  // start connection and send HTTP header
+  Serial.print("[HTTP] GET...\n");
+  int httpCode = http.GET();
+
+  // HttpCode will be negative on error
+  if(httpCode > 0) {
+    // HTTP header has been send and Server response header has been handled
+    Serial.printf("[HTTP] POST... code: %d\n", httpCode);
+
+    // file found at server
+    if(httpCode == HTTP_CODE_OK || httpCode == HTTP_CODE_CREATED) {
+        String payload = http.getString();
+        Serial.println(payload);
+        StaticJsonDocument<200> doc;
+        deserializeJson(doc, payload);
+        serializeJsonPretty(doc, Serial);
+
+    }
+    else
+    {
+      beep(3, 50);
+    }
+    return true;
+  } 
+  else 
+  {
+    Serial.printf("[HTTP] POST... failed, error: %s\n", http.errorToString(httpCode).c_str());
+    beep(4, 100);
+    return false;
+  }
+  http.end();
+}
+
 // Sends HTTP POST request to API endpoint
 bool sendPOSTRequest(String messageJson)
 {
@@ -135,7 +186,6 @@ bool sendPOSTRequest(String messageJson)
     {
       beep(3, 50);
     }
-    
     return true;
   } 
   else 
@@ -169,8 +219,8 @@ uint parserNFCResults(bool success, uint8_t (&uid)[7], uint8_t uidLength)
   else
   {
     // PN532 probably timed out waiting for a card
-    Serial.println("Timed out waiting for a card");
-    beep(3,250);
+    Serial.println(".");
+    //beep(3,250);
     return 0;
   }
 }
@@ -251,7 +301,7 @@ void setupNFCReader()
   // Set the max number of retry attempts to read from a card
   // This prevents us from waiting forever for a card, which is
   // the default behaviour of the PN532.
-  nfc.setPassiveActivationRetries(0xFF);
+  nfc.setPassiveActivationRetries(0x05);
   
   // configure board to read RFID cards
   nfc.SAMConfig();
