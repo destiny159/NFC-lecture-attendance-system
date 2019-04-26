@@ -9,7 +9,7 @@ namespace NFCSystem.Models
     {
         [Required]
         [KeyAttribute]
-        public int StudentId {get;set;}
+        public string StudentId {get;set;}
         [Required]
         public string Title {get;set;}
         [Required]

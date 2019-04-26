@@ -5,6 +5,8 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NFCSystem.Models;
+using NFCSystem.Models.Timetables;
+using NFCSystem.Data;
 
 namespace NFCSystem.Controllers
 {
@@ -12,48 +14,42 @@ namespace NFCSystem.Controllers
     [ApiController]
     public class LecturesController : ControllerBase
     {
-        // GET api/values
-        [HttpGet]
-        public ActionResult<IEnumerable<string>> Get()
+        private readonly ApplicationDbContext _context;
+
+        public LecturesController(ApplicationDbContext context)
         {
-            return new string[] { "value1", "value2" };
+            _context = context;
         }
 
-        // GET api/values/5
+        // GET api/lectures/5
         [HttpGet("{id}")]
-        public ActionResult<List<Lecture>> Get(int id)
+        public async Task<ActionResult<List<Lecture>>> Get(string id)
         {
-            List<Lecture> lectures = new List<Lecture>()
+            var timetable = _context.Timetables.Where(x => x.StudentId == id).ToList();
+
+            if (timetable == null)
             {
-                new Lecture()
+                return NotFound();
+            }
+
+            List<Lecture> lectures = new List<Lecture>();
+
+            foreach (var lecture in timetable)
+            {
+                lectures.Add(new Lecture()
                 {
-                    StudentId = 1,
-                    Title = "Programų sistemų inžinerija",
-                    Details = "09:00 - 10:30<br>P175B015 Programų sistemų inžinerija<br>Teorinė paskaita<br>Kaunas, Studentų g.50 XI r.-101<br>Dėstytojas: Tomas Blažauskas",
-                    Start = Convert.ToDateTime("2019-04-17 09:00"),
-                    Finish = Convert.ToDateTime("2019-04-17 10:30"),
-                    Open = false
-                },
-                new Lecture()
-                {
-                    StudentId = 1,
-                    Title = "Programų sistemų inžinerija",
-                    Details = "09:00 - 10:30<br>P175B015 Programų sistemų inžinerija<br>Praktinė paskaita<br>Kaunas, Studentų g.50 XI r.-101<br>Dėstytojas: Tomas Blažauskas",
-                    Start = Convert.ToDateTime("2019-04-01 09:00"),
-                    Finish = Convert.ToDateTime("2019-04-01 10:30"),
-                    Open = false
-                },
-                new Lecture()
-                {
-                    StudentId = 1,
-                    Title = "Programų sistemų inžinerija",
-                    Details = "09:00 - 10:30<br>P175B015 Programų sistemų inžinerija<br>Laboratorinis darbas<br>Kaunas, Studentų g.50 XI r.-101<br>Dėstytojas: Tomas Blažauskas",
-                    Start = Convert.ToDateTime("2019-04-23 09:00"),
-                    Finish = Convert.ToDateTime("2019-04-23 10:30"),
-                    Open = false
-                }
-            };
-            return lectures.Where(x => x.StudentId == id).ToList();
+                    StudentId = id,
+                    Title = lecture.CourseId + " " + _context.Courses.FirstOrDefault(x => x.CourseId == lecture.CourseId).CourseName,
+                    Details = _context.Periods.FirstOrDefault(x => x.PeriodId == lecture.PeriodId).PeriodStartTime + " - " + 
+                        _context.Periods.FirstOrDefault(x => x.PeriodId == lecture.PeriodId).PeriodEndTime + "<br>" + 
+                        lecture.LectureType + "<br>" + _context.Classrooms.FirstOrDefault(x => x.ClassroomId == lecture.ClassroomId).ClassLocation + " r.-" + 
+                        _context.Classrooms.FirstOrDefault(x => x.ClassroomId == lecture.ClassroomId).ClassLabel,
+                    Start = Convert.ToDateTime(lecture.Date.ToString("yyyy-MM-dd") + "T" + _context.Periods.FirstOrDefault(x => x.PeriodId == lecture.PeriodId).PeriodStartTime),
+                    Finish =Convert.ToDateTime(lecture.Date.ToString("yyyy-MM-dd") + "T" + _context.Periods.FirstOrDefault(x => x.PeriodId == lecture.PeriodId).PeriodEndTime),
+                });
+            }
+
+            return lectures;
         }
     }
 }

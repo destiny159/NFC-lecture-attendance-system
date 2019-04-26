@@ -201,7 +201,7 @@
             <template v-for="event in eventsMap[date]">
               <!-- timed events -->
               <div
-                :key="event.title"
+                :key="event.key"
                 :style="{ top: timeToY(event.start.substring(11,16)) + 'px', height: minutesToPixels(event.lectureDuration) + 'px', color: 'black', backgroundColor: event.color, borderColor: event.color }"
                 class="my-eventTime with-time"
                 v-html="event.title"
@@ -212,10 +212,10 @@
           </template>
         <template v-slot:day="{ date }">
               <template v-for="event in eventsMap[date]">
-                <div :key="event.title">   
+                <div :key="event.key">   
                   <v-sheet :color="event.color">             
                     <v-menu
-                      :key="event.title"
+                      :key="event.key"
                       v-model="event.open"
                       full-width
                       offset-x
@@ -363,20 +363,24 @@
     },
     created () {
       // In the url instead of 1 should be student id
-      axios.get(`api/lectures/1`)
+      const userData = JSON.parse(localStorage.getItem("user"));
+      const userId =  userData.userName.id;
+      axios.get(`api/lectures/${userId}`)
       .then(response => {
         // JSON responses are automatically parsed.
         this.events = response.data
         this.events.forEach(element => {
+          element.key = Math.random();
           element.date = element.start.substring(0,10);
-          if (element.details.includes('Teorinė')) {
+          if (element.details.includes('Teori')) {
             element.color = 'red'
-          } else if (element.details.includes('Praktinė')) {
+          } else if (element.details.includes('Prakti')) {
             element.color = 'blue'
           } else {
             element.color = 'green'
           }
           element.lectureDuration = Math.floor((Math.abs(new Date(element.start) - new Date(element.finish))/1000)/60);
+          element.open = false;
         });
       })
       .catch(e => {
