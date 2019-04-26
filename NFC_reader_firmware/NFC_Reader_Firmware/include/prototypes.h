@@ -10,3 +10,5 @@ void beep(int count, int duration);
 void charToStringL(const char S[], String &D);
 void printHearBeat();
 bool pollSettingsGet();
+void readIdEPROM();
+void updateEPROM();

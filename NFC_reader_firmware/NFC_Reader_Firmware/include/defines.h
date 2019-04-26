@@ -32,7 +32,9 @@
 //#define API_ENDPOINT      "http://lankomumas.duckdns.org:4430:/api/nfcscan/postscan"
 #define API_ENDPOINT        "http://192.168.0.101:4430/api/nfcscan/postscan"
 #define API_ENDPOINT_POLL   "http://192.168.0.101:4430/api/nfcscan/getdeviceid/"
+#define API_ENDPOINT_UP_DEV "http://192.168.0.101:4430/api/nfcscan/postdevice/"
 //#define API_ENDPOINT      "http://192.168.43.119:4430/api/nfcscan/postscan"
 
 // Device config
-#define CHECK_UPDAYE_TIME 10000
+#define EEPROM_SIZE 16
+#define CHECK_UPDATE_INTER 10000

@@ -23,7 +23,7 @@ bool againLine = false;
 
 
 // Functional Global variables
-String deviceId = "8";
+String deviceId = "9999";
 
 void setup(void) {
   // Setup pins
@@ -34,6 +34,19 @@ void setup(void) {
   setupNFCReader();
   wifiConnect();
   configureTime();
+
+  // Load config
+  
+  if(!EEPROM.begin(EEPROM_SIZE))
+  {
+    Serial.println("Failed to init EEPROM!!");
+  }
+  EEPROM.commit();
+  for (int i = 0; i < EEPROM_SIZE; i++)
+  {
+    Serial.print(byte(EEPROM.read(i))); Serial.print(" ");
+  }
+  readIdEPROM();
 
   // Setup time
   start = millis();
@@ -55,7 +68,7 @@ void loop(void) {
     startHearbeat = millis();
     printHearBeat();
   }
-  if(millis() - start >= 500)
+  if(millis() - start >= 2500)
   {
     againLine = true;
     start = millis();
@@ -120,41 +133,88 @@ bool pollSettingsGet()
   Serial.println(endpoint);
 
   // Configure traget server url
-  Serial.print("[HTTP] begin...\n");
+  Serial.print("[HTTP] Poll begin...\n");
   http.begin(endpoint);
   http.setTimeout(3500);
 
   // start connection and send HTTP header
-  Serial.print("[HTTP] GET...\n");
+  Serial.print("[HTTP] Poll GET...\n");
   int httpCode = http.GET();
 
   // HttpCode will be negative on error
   if(httpCode > 0) {
     // HTTP header has been send and Server response header has been handled
-    Serial.printf("[HTTP] POST... code: %d\n", httpCode);
+    Serial.printf("[HTTP]Poll GET... code: %d\n", httpCode);
+    if(httpCode == HTTP_CODE_OK || httpCode == HTTP_CODE_CREATED) 
+    {
+      String payload = http.getString();
+      //Serial.println(payload);
+      StaticJsonDocument<200> doc;
+      deserializeJson(doc, payload);
+      serializeJsonPretty(doc, Serial);
+      
+      String deviceIdReal = doc["deviceIdReal"];
+      String pendingDeviceId = doc["pendingDeviceId"];
 
-    // file found at server
-    if(httpCode == HTTP_CODE_OK || httpCode == HTTP_CODE_CREATED) {
-        String payload = http.getString();
-        Serial.println(payload);
-        StaticJsonDocument<200> doc;
-        deserializeJson(doc, payload);
+      if(deviceIdReal != pendingDeviceId)
+      {
+        doc["deviceIdReal"] = pendingDeviceId;
+        Serial.println("Changed id");
         serializeJsonPretty(doc, Serial);
+        serializeJsonPretty(doc, json);
 
+
+        HTTPClient httpUp;
+        Serial.print("[HTTP] Up begin...\n");
+        httpUp.begin(API_ENDPOINT_UP_DEV); 
+        httpUp.addHeader("Content-Type", "application/json"); 
+        Serial.print("[HTTP] Up POST...\n");
+        httpCode = httpUp.POST(json);
+        
+        if(httpCode > 0) 
+        {
+          Serial.printf("[HTTP] Up POST... code: %d\n", httpCode);
+          if(httpCode == HTTP_CODE_OK || httpCode == HTTP_CODE_CREATED) {
+              payload = httpUp.getString();
+              Serial.println(payload);
+              deviceId = pendingDeviceId;
+              updateEPROM();
+          }
+          else
+          {
+            beep(3, 50);
+            http.end();
+            return false;
+          }
+        } 
+        else 
+        {
+          Serial.printf("[HTTP] Up POST... failed, error: %s\n", http.errorToString(httpCode).c_str());
+          beep(4, 100);
+          http.end();
+          return false;
+        }
+        httpUp.end();
+      }
+      else
+      {
+        Serial.println("Id didnt change");
+      }
     }
     else
     {
       beep(3, 50);
+      http.end();
+      return false;
     }
-    return true;
   } 
   else 
   {
-    Serial.printf("[HTTP] POST... failed, error: %s\n", http.errorToString(httpCode).c_str());
+    Serial.printf("[HTTP] Poll GET... failed, error: %s\n", http.errorToString(httpCode).c_str());
     beep(4, 100);
+    http.end();
     return false;
   }
-  http.end();
 }
 
 // Sends HTTP POST request to API endpoint
@@ -186,15 +246,16 @@ bool sendPOSTRequest(String messageJson)
     {
       beep(3, 50);
     }
+    http.end();
     return true;
   } 
   else 
   {
     Serial.printf("[HTTP] POST... failed, error: %s\n", http.errorToString(httpCode).c_str());
     beep(4, 100);
+    http.end();
     return false;
   }
-  http.end();
 }
 
 // Prints out results of NFC module
@@ -247,6 +308,20 @@ bool printLocalTime(char s[])
   strftime(s,32,"%Y-%m-%d %H:%M:%S", &timeinfo);
   //Serial.println(timeStr);
   return true;
+}
+
+void readIdEPROM()
+{
+  int id = EEPROM.readInt(4);
+  Serial.println(id);
+  deviceId = String(id);
+}
+
+void updateEPROM()
+{
+  int id = deviceId.toInt();
+  EEPROM.writeInt(4,id);
+  EEPROM.commit();
 }
 
 
