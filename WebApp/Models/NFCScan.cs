@@ -1,16 +1,13 @@
+using System;
 using System.ComponentModel.DataAnnotations;
 namespace NFCSystem.Models
 {
     public class NFCScan
     {
-        [Required]
-        [KeyAttribute]
-        public long ScanID {get;set;}
-        [Required]
+        public int ScanId {get;set;}
         public long UID {get;set;}
-        [Required]
-        public long TimeStamp {get;set;}
-        [Required]
-        public string StudId{get;set;}
+        public DateTime TimeStamp {get;set;}
+
+        public int DeviceId {get;set;}
     }
 }

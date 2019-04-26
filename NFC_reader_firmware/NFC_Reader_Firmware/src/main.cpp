@@ -9,9 +9,10 @@
 #include "defines.h"
 #include "prototypes.h"
 #include <ArduinoJson.h>
+#include "EEPROM.h"
 
 #define DEBUG
-#define EDUROAM
+//#define EDUROAM
 
 
 // NFC reader object, uses pins defined in defines.h
@@ -19,6 +20,10 @@ Adafruit_PN532 nfc(PN532_SCK, PN532_MISO, PN532_MOSI, PN532_SS);
 uint64_t start;
 uint64_t startHearbeat;
 bool againLine = false;
+
+
+// Functional Global variables
+String deviceId = "9999";
 
 void setup(void) {
   // Setup pins
@@ -30,6 +35,19 @@ void setup(void) {
   wifiConnect();
   configureTime();
 
+  // Load config
+  
+  if(!EEPROM.begin(EEPROM_SIZE))
+  {
+    Serial.println("Failed to init EEPROM!!");
+  }
+  EEPROM.commit();
+  for (int i = 0; i < EEPROM_SIZE; i++)
+  {
+    Serial.print(byte(EEPROM.read(i))); Serial.print(" ");
+  }
+  readIdEPROM();
+
   // Setup time
   start = millis();
   startHearbeat = millis();
@@ -38,7 +56,7 @@ void setup(void) {
 }
 
 void loop(void) {
-  boolean success = false;
+  bool success = false;
   uint8_t uid[] = { 0, 0, 0, 0, 0, 0, 0 };	// Buffer to store the returned UID
   uint8_t uidLength;				                // Length of the UID (4 or 7 bytes depending on ISO14443A card type)
   
@@ -50,25 +68,26 @@ void loop(void) {
     startHearbeat = millis();
     printHearBeat();
   }
-  if(millis() - start >= 1000)
+  if(millis() - start >= 2500)
   {
     againLine = true;
     start = millis();
     success = nfc.readPassiveTargetID(PN532_MIFARE_ISO14443A, &uid[0], &uidLength);
     parserNFCResults(success, uid, uidLength);
+    pollSettingsGet();
   }
 
   if((WiFi.status() == WL_CONNECTED) && success) 
   {
     String json;
     uint32_t cardUid = uid[0] + (uid[1] << 8) + (uid[2] << 16) + (uid[3] << 24);
-    time_t timestamp = getCurrentTimestamp();
+    // time_t timestamp = getCurrentTimestamp();
     StaticJsonDocument<200> doc;
-    char timeString[32] = "ABXDSFS";
+    char timeString[32] = "";
     printLocalTime(timeString);
     doc["UID"] = cardUid;
-    doc["DeviceID"] = DEVICE_ID;
-    doc["TimeStamp"] = timestamp;
+    doc["DeviceID"] = deviceId;
+    doc["TimeStamp"] = timeString;
     serializeJson(doc, json);
     serializeJsonPretty(doc, Serial);
     Serial.println();
@@ -106,6 +125,98 @@ time_t getCurrentTimestamp()
   return mktime(&timeinfo);
 }
 
+bool pollSettingsGet()
+{
+  HTTPClient http;
+  String json;
+  String endpoint = API_ENDPOINT_POLL + deviceId;
+  Serial.println(endpoint);
+
+  // Configure traget server url
+  Serial.print("[HTTP] Poll begin...\n");
+  http.begin(endpoint);
+  http.setTimeout(3500);
+
+  // start connection and send HTTP header
+  Serial.print("[HTTP] Poll GET...\n");
+  int httpCode = http.GET();
+
+  // HttpCode will be negative on error
+  if(httpCode > 0) {
+    // HTTP header has been send and Server response header has been handled
+    Serial.printf("[HTTP]Poll GET... code: %d\n", httpCode);
+    if(httpCode == HTTP_CODE_OK || httpCode == HTTP_CODE_CREATED) 
+    {
+      String payload = http.getString();
+      //Serial.println(payload);
+      StaticJsonDocument<200> doc;
+      deserializeJson(doc, payload);
+      serializeJsonPretty(doc, Serial);
+      
+      String deviceIdReal = doc["deviceIdReal"];
+      String pendingDeviceId = doc["pendingDeviceId"];
+
+      if(deviceIdReal != pendingDeviceId)
+      {
+        doc["deviceIdReal"] = pendingDeviceId;
+        Serial.println("Changed id");
+        serializeJsonPretty(doc, Serial);
+        serializeJsonPretty(doc, json);
+
+
+        HTTPClient httpUp;
+        Serial.print("[HTTP] Up begin...\n");
+        httpUp.begin(API_ENDPOINT_UP_DEV); 
+        httpUp.addHeader("Content-Type", "application/json"); 
+        Serial.print("[HTTP] Up POST...\n");
+        httpCode = httpUp.POST(json);
+        
+        if(httpCode > 0) 
+        {
+          Serial.printf("[HTTP] Up POST... code: %d\n", httpCode);
+          if(httpCode == HTTP_CODE_OK || httpCode == HTTP_CODE_CREATED) {
+              payload = httpUp.getString();
+              Serial.println(payload);
+              deviceId = pendingDeviceId;
+              updateEPROM();
+          }
+          else
+          {
+            beep(3, 50);
+            http.end();
+            return false;
+          }
+        } 
+        else 
+        {
+          Serial.printf("[HTTP] Up POST... failed, error: %s\n", http.errorToString(httpCode).c_str());
+          beep(4, 100);
+          http.end();
+          return false;
+        }
+        httpUp.end();
+      }
+      else
+      {
+        Serial.println("Id didnt change");
+      }
+    }
+    else
+    {
+      beep(3, 50);
+      http.end();
+      return false;
+    }
+  } 
+  else 
+  {
+    Serial.printf("[HTTP] Poll GET... failed, error: %s\n", http.errorToString(httpCode).c_str());
+    beep(4, 100);
+    http.end();
+    return false;
+  }
+}
+
 // Sends HTTP POST request to API endpoint
 bool sendPOSTRequest(String messageJson)
 {
@@ -114,7 +225,7 @@ bool sendPOSTRequest(String messageJson)
   // Configure traget server url
   Serial.print("[HTTP] begin...\n");
   http.begin(API_ENDPOINT); 
-  http.setTimeout(5000);
+  http.setTimeout(3500);
   http.addHeader("Content-Type", "application/json");
 
   // start connection and send HTTP header
@@ -135,16 +246,16 @@ bool sendPOSTRequest(String messageJson)
     {
       beep(3, 50);
     }
-    
+    http.end();
     return true;
   } 
   else 
   {
-    Serial.printf("[HTTP] GET... failed, error: %s\n", http.errorToString(httpCode).c_str());
+    Serial.printf("[HTTP] POST... failed, error: %s\n", http.errorToString(httpCode).c_str());
     beep(4, 100);
+    http.end();
     return false;
   }
-  http.end();
 }
 
 // Prints out results of NFC module
@@ -169,8 +280,8 @@ uint parserNFCResults(bool success, uint8_t (&uid)[7], uint8_t uidLength)
   else
   {
     // PN532 probably timed out waiting for a card
-    Serial.println("Timed out waiting for a card");
-    beep(3,250);
+    Serial.println(".");
+    //beep(3,250);
     return 0;
   }
 }
@@ -193,9 +304,24 @@ bool printLocalTime(char s[])
     return false;
   }
   //Serial.println(&timeinfo, "%A, %B %d %Y %H:%M:%S");
-  strftime(s,32,"%A, %B %d %Y %H:%M:%S", &timeinfo);
+  //strftime(s,32,"%A, %B %d %Y %H:%M:%S", &timeinfo);
+  strftime(s,32,"%Y-%m-%d %H:%M:%S", &timeinfo);
   //Serial.println(timeStr);
   return true;
+}
+
+void readIdEPROM()
+{
+  int id = EEPROM.readInt(4);
+  Serial.println(id);
+  deviceId = String(id);
+}
+
+void updateEPROM()
+{
+  int id = deviceId.toInt();
+  EEPROM.writeInt(4,id);
+  EEPROM.commit();
 }
 
 
@@ -203,9 +329,10 @@ void wifiConnect()
 {
   WiFi.disconnect(true);  //disconnect form wifi to set new wifi connection
   WiFi.mode(WIFI_STA); //init wifi mode
-  Serial.printf("Connecting to %s ", EAP_SSID);
+  
 
   #ifdef EDUROAM
+    Serial.printf("Connecting to %s ", EAP_SSID);
     //esp_wifi_sta_wpa2_ent_set_identity((uint8_t *)EAP_IDENTITY, strlen(EAP_IDENTITY)); //provide identity
     esp_wifi_sta_wpa2_ent_set_username((uint8_t *)EAP_IDENTITY, strlen(EAP_IDENTITY)); //provide username --> identity and username is same
     esp_wifi_sta_wpa2_ent_set_password((uint8_t *)EAP_PASSWORD, strlen(EAP_PASSWORD)); //provide password
@@ -213,6 +340,7 @@ void wifiConnect()
     esp_wifi_sta_wpa2_ent_enable(&config); //set config settings to enable function
     WiFi.begin(EAP_SSID);
   #else
+    Serial.printf("Connecting to %s ", SSID);
     WiFi.begin(SSID, PASSWD);
   #endif // EDUROAM
 
@@ -248,7 +376,7 @@ void setupNFCReader()
   // Set the max number of retry attempts to read from a card
   // This prevents us from waiting forever for a card, which is
   // the default behaviour of the PN532.
-  nfc.setPassiveActivationRetries(0xFF);
+  nfc.setPassiveActivationRetries(0x05);
   
   // configure board to read RFID cards
   nfc.SAMConfig();

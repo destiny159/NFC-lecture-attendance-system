@@ -63,11 +63,13 @@ export default class App extends Vue {
   private right: boolean = true;
   private title: string = 'NFC lankomumo sistema';
   private renderComponent: boolean =  true;
+  private sss = JSON.parse(localStorage.getItem("user") || '{}');
   private items = [
-    { title: 'Home', icon: 'home', link: '/home' },
-    { title: 'Fetch data', icon: 'get_app', link: '/fetch-data' },
-    { title: 'NFC Scans', icon: 'nfc', link: '/nfc-fetch' },
-    { title: 'Timetable', icon: 'warning', link: '/timetable' },
+    { title: 'Pagrindinis', icon: 'home', link: '/home' },
+    { title: 'Gauti duomenis (test)', icon: 'get_app', link: '/fetch-data' },
+    { title: 'NFC skenavimai', icon: 'nfc', link: '/nfc-fetch' },
+    { title: 'Naudotoju sąrašas', icon: 'supervised_user_circle', link: '/user-list' },
+    { title: 'Tvarkaraštis', icon: 'warning', link: '/timetable' },
   ];
 
 
@@ -81,7 +83,13 @@ export default class App extends Vue {
   logState()
   {
     this.$forceUpdate();
-    console.log(this.isLoggedIn());
+    console.log(this.sss.userName.email);
+    console.log(this.sss.userName.group);
+    console.log(this.sss.userName.name);
+    console.log(this.sss.userName.surname);
+    console.log(this.sss.userName.id);
+    console.log(this.sss.userName.uid);
+    console.log(this.sss.userName.userName);
   }
 
 

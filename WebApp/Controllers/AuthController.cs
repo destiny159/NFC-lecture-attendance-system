@@ -11,18 +11,22 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using NFCSystem.Models;
+using NFCSystem.Data;
+using System.Data;
 
 namespace JwtAuthentication.Controllers
 {
     public class AuthController : Controller
     {
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly ApplicationDbContext _context;
         private readonly IConfiguration _configuration;
 
-        public AuthController(UserManager<ApplicationUser> userManager, IConfiguration configuration)
+        public AuthController(UserManager<ApplicationUser> userManager, IConfiguration configuration, ApplicationDbContext context)
         {
             _userManager = userManager;
             _configuration = configuration;
+            _context = context;
         }
 
         // /register
@@ -35,16 +39,17 @@ namespace JwtAuthentication.Controllers
                 UserName = model.UserName,
                 Name = model.Name,
                 Surname = model.Surname,
-                Group = model.Group,
-                StudentCode = model.StudentCode.ToUpper(),
-                UID = model.UID,
                 Email = model.Email,
-                SecurityStamp = Guid.NewGuid().ToString()
+                SecurityStamp = Guid.NewGuid().ToString(),
+                UID = model.UID,
+                Group = model.Group,
+                StudentCode = model.StudentCode,
+                
             };
             var result = await _userManager.CreateAsync(user, model.Password);
             if (result.Succeeded)
             {
-                await _userManager.AddToRoleAsync(user, "USER");
+                await _userManager.AddToRoleAsync(user, "ADMIN");
             }
             return Ok(new { Username = user.UserName });
         }
@@ -59,7 +64,8 @@ namespace JwtAuthentication.Controllers
                 var claim = new[] {
                     new Claim(JwtRegisteredClaimNames.Sub, user.UserName)
                 };
-                var signinKey = new SymmetricSecurityKey(
+                var role = _context.IdentityUserRoles.Where(i => i.UserId == user.Id).First().RoleId; // Gets user's role
+                var signinKey = new SymmetricSecurityKey( // Salt
                   Encoding.UTF8.GetBytes(_configuration["Jwt:SigningKey"]));
 
                 int expiryInMinutes = Convert.ToInt32(_configuration["Jwt:ExpiryInMinutes"]);
@@ -76,7 +82,8 @@ namespace JwtAuthentication.Controllers
                   {
                       token = new JwtSecurityTokenHandler().WriteToken(token),
                       expiration = token.ValidTo,
-                      userName = user
+                      userName = user,
+                      role = role
                   });
             }
             return Unauthorized();
