@@ -55,7 +55,6 @@ import { router } from './router';
     Registration,
   },
 })
-
 export default class App extends Vue {
   private clipped: boolean = true;
   private drawer: boolean = true;
@@ -69,7 +68,9 @@ export default class App extends Vue {
     { title: 'Gauti duomenis (test)', icon: 'get_app', link: '/fetch-data' },
     { title: 'NFC skenavimai', icon: 'nfc', link: '/nfc-fetch' },
     { title: 'Naudotoju sąrašas', icon: 'supervised_user_circle', link: '/user-list' },
-    { title: 'Tvarkaraštis', icon: 'warning', link: '/timetable' },
+    { title: 'Tvarkaraštis', icon: 'date_range', link: '/timetable' },
+    { title: 'Įrenginiai', icon: 'scanner', link: '/device-fetch' },
+    { title: 'Statistika', icon: 'timeline', link: '/statistics' },
   ];
 
 
