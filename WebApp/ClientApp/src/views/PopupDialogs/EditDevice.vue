@@ -20,7 +20,7 @@
           <v-container grid-list-md>
             <v-layout wrap>
               <v-flex xs12>
-                <v-text-field label="Sąrašo nr." :value = "deviceObj.deviceId"  required readonly  outline></v-text-field>
+                <v-text-field label="Sąrašo nr." :value = "deviceObj.deviceId" required readonly  outline></v-text-field>
               </v-flex>
               <v-flex xs12>
                 <v-text-field label="Realus įrenginio ID" :value = "deviceObj.deviceIdReal"  required readonly  outline></v-text-field>
@@ -29,15 +29,16 @@
                 <v-text-field label="Laukiama atnaujinimo" :value = "deviceObj.updatePending" required readonly  outline></v-text-field>
               </v-flex>
               <v-flex xs12>
-                <v-text-field label="Naujas įrenginio ID*" :value = "deviceObj.pendingDeviceId"></v-text-field>
+                <v-text-field v-model="deviceObj.pendingDeviceId" label="Naujas įrenginio ID*" :value = "deviceObj.pendingDeviceId"></v-text-field>
               </v-flex>
               <v-flex xs12>
                 <v-select
                   label="Auditorija*"
+                  v-model="classroom"
                   :items="classrooms"
-                  name="classroomId"
+                  name="classroom"
                   :item-text="textProps"
-                  :value="classrooms[deviceObj.classroomId]"
+                  :value = "classrooms[getClass(deviceObj.classroomId)]"
                   required
                 ></v-select>
               </v-flex>
@@ -48,7 +49,7 @@
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn dark color="blue darken-1" flat @click="dialog = false">Uždaryti</v-btn>
-          <v-btn dark color="blue darken-1" flat @click="dialog = false">Išsaugoti</v-btn>
+          <v-btn dark color="blue darken-1" flat @click="submit">Išsaugoti</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -67,6 +68,7 @@
     },
     data: () => ({
       classrooms: [],
+      classroom: null,
       dialog: false
     }),
     created () {
@@ -74,9 +76,11 @@
       axios.get(`api/lectures/getclassrooms`)
       .then(response => {
         // JSON responses are automatically parsed.
-        this.classrooms = response.data
+        this.classrooms = response.data;
+        console.log(this.classrooms)
+        // console.log(this.$props.deviceObj.classroomId);
       });
-      console.log(this.classrooms);
+    
     },
     computed: {
       getClassrooms () {
@@ -85,12 +89,35 @@
       },
 
       getNormalLocation(label, location){
-        return label + " " + location
+        return label + " " + location;
       }
       
     },
     methods: {
-      textProps: item => item.classLocation + ' r.-' + item.classLabel
+      submit(){
+          
+          console.log(this.$props.deviceObj);
+          this.dialog = false;
+      },
+      getClass(id)
+      {
+        var idx =  findWithAttr(this.classrooms, 'classroomId', this.$props.deviceObj.classroomId)
+        console.log(this.$props.deviceObj.classroomId);
+        console.log(idx)
+        console.log(this.classrooms[idx]);
+        //this.classroom = this.classrooms[idx]
+        return idx;
+      },
+      textProps: item => item.classLocation + ' r.-' + item.classLabel,
     }
+    
+}
+function findWithAttr(array, attr, value) {
+    for(var i = 0; i < array.length; i += 1) {
+        if(array[i][attr] === value) {
+            return i;
+        }
+    }
+    return -1;
 }
 </script>
