@@ -26,9 +26,16 @@
       <v-spacer></v-spacer>
       <Registration v-if="!isLoggedIn()" right/>
       <DialogTest v-if="!isLoggedIn()" right/>
+      <v-chip v-if="isLoggedIn()" color="indigo" text-color="white">
+        <v-avatar>
+          <v-icon>account_circle</v-icon>
+        </v-avatar>
+        {{ myRole() }}
+      </v-chip>
       <v-btn v-if="isLoggedIn()" icon @click.stop="logout">
         <v-icon>exit_to_app</v-icon>
       </v-btn>
+
     </v-toolbar>
 
     <v-content>
@@ -47,6 +54,7 @@ import { Component, Vue } from 'vue-property-decorator';
 import DialogTest from './views/DialogTest.vue'; // @ is an alias to /src
 import Registration from './views/Registration.vue';
 import { userService } from './services/user.service';
+//import './store/login/acount.module';
 import { router } from './router';
 
 @Component({
@@ -61,9 +69,25 @@ export default class App extends Vue {
   private miniVariant: boolean = false;
   private right: boolean = true;
   private title: string = 'NFC lankomumo sistema';
+  private userElement: string = JSON.parse(localStorage.getItem('user') || '{}');
+  private role: String = JSON.parse(localStorage.getItem('user') || '{}')['role']['roleId'];
   private renderComponent: boolean =  true;
-  private sss = JSON.parse(localStorage.getItem("user") || '{}');
-  private items = [
+
+  private itemsStudent = [
+    { title: 'Pagrindinis', icon: 'home', link: '/home' },
+    { title: 'Tvarkaraštis', icon: 'date_range', link: '/timetable' },
+    { title: 'Statistika', icon: 'timeline', link: '/statistics' },
+  ];
+  private itemsAdmin = [
+    { title: 'Pagrindinis', icon: 'home', link: '/home' },
+    { title: 'Gauti duomenis (test)', icon: 'get_app', link: '/fetch-data' },
+    { title: 'NFC skenavimai', icon: 'nfc', link: '/nfc-fetch' },
+    { title: 'Naudotoju sąrašas', icon: 'supervised_user_circle', link: '/user-list' },
+    { title: 'Tvarkaraštis', icon: 'date_range', link: '/timetable' },
+    { title: 'Įrenginiai', icon: 'scanner', link: '/device-fetch' },
+    { title: 'Statistika', icon: 'timeline', link: '/statistics' },
+  ];
+  private itemsLecturer = [
     { title: 'Pagrindinis', icon: 'home', link: '/home' },
     { title: 'Gauti duomenis (test)', icon: 'get_app', link: '/fetch-data' },
     { title: 'NFC skenavimai', icon: 'nfc', link: '/nfc-fetch' },
@@ -73,6 +97,42 @@ export default class App extends Vue {
     { title: 'Statistika', icon: 'timeline', link: '/statistics' },
   ];
 
+  myRole()
+  {
+    var myRoleString = "";
+    if(this.role == 'STUDENT')
+    {
+      myRoleString += 'Studentas';
+    }
+    if(this.role == 'ADMIN')
+    {
+      myRoleString += 'Administratorius';
+    }
+    if(this.role == 'LECTURER')
+    {
+      myRoleString += 'Dėstytojas';
+    }
+    myRoleString += ': '
+    myRoleString += this.userElement['userName']['name'] + ' ' + this.userElement['userName']['surname'];
+    return myRoleString;
+  }
+
+  get items(){
+    console.log("Role is:");
+    console.log(this.role)
+    if(this.role == "STUDENT")
+    {
+      return this.itemsStudent;
+    }
+    if(this.role == "ADMIN")
+    {
+      return this.itemsAdmin;
+    }
+    if(this.role == "LECTURER")
+    {
+      return this.itemsLecturer;
+    }
+  }
 
   logout()
   {
@@ -84,13 +144,13 @@ export default class App extends Vue {
   logState()
   {
     this.$forceUpdate();
-    console.log(this.sss.userName.email);
-    console.log(this.sss.userName.group);
-    console.log(this.sss.userName.name);
-    console.log(this.sss.userName.surname);
-    console.log(this.sss.userName.id);
-    console.log(this.sss.userName.uid);
-    console.log(this.sss.userName.userName);
+    // console.log(this.sss.userName.email);
+    // console.log(this.sss.userName.group);
+    // console.log(this.sss.userName.name);
+    // console.log(this.sss.userName.surname);
+    // console.log(this.sss.userName.id);
+    // console.log(this.sss.userName.uid);
+    // console.log(this.sss.userName.userName);
   }
 
 

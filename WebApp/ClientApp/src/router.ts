@@ -45,11 +45,6 @@ export const router = new Router({
       component: () => import(/* webpackChunkName: "fetch-data" */ './views/Timetable.vue'),
     },
     {
-      path: '/login',
-      name: 'login',
-      component: () => import(/* webpackChunkName: "fetch-data" */ './views/LoginMock.vue'),
-    },
-    {
       path: '*',
       redirect: '/home',
     },

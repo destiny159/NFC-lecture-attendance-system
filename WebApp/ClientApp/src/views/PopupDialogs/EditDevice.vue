@@ -105,13 +105,23 @@
         console.log(this.$props.deviceObj.classroomId);
         console.log(idx)
         console.log(this.classrooms[idx]);
+        var classss = this.classrooms[idx];
+        this.classroom = classss.classroomId + ' - ' + classss.classLocation + ' r.-' + classss.classLabel;
+        console.log(this.classrooms[idx]);
+        console.log(this.classroom);
         //this.classroom = this.classrooms[idx]
         return idx;
       },
-      textProps: item => item.classLocation + ' r.-' + item.classLabel,
+      textProps: item => item.classroomId + ' - ' + item.classLocation + ' r.-' + item.classLabel,
     }
     
 }
+
+function getTextProps(item)
+      {
+        return item.classroomId + ' - ' + item.classLocation + ' r.-' + item.classLabel;
+      }
+
 function findWithAttr(array, attr, value) {
     for(var i = 0; i < array.length; i += 1) {
         if(array[i][attr] === value) {
