@@ -4,7 +4,6 @@
       <v-layout column>
         <h1>Įrenginių sarašas</h1>
         <p>Čia galima keisti ir peržiūrėti įrenginiu parametrus</p>
-        <HelloWorld device = "15"/>
         <v-data-table
             :headers="headers"
             :items="scans"

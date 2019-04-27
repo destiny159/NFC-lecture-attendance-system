@@ -20,23 +20,24 @@
           <v-container grid-list-md>
             <v-layout wrap>
               <v-flex xs12>
-                <v-text-field label="Sąrašo nr." :value = "deviceObj.deviceId"  required readonly disabled outline></v-text-field>
+                <v-text-field label="Sąrašo nr." :value = "deviceObj.deviceId"  required readonly  outline></v-text-field>
               </v-flex>
               <v-flex xs12>
-                <v-text-field label="Realus įrenginio ID" :value = "deviceObj.deviceIdReal"  required readonly disabled outline></v-text-field>
+                <v-text-field label="Realus įrenginio ID" :value = "deviceObj.deviceIdReal"  required readonly  outline></v-text-field>
               </v-flex>
               <v-flex xs12>
-                <v-text-field label="Laukiama atnaujinimo" :value = "deviceObj.updatePending" required readonly disabled outline></v-text-field>
+                <v-text-field label="Laukiama atnaujinimo" :value = "deviceObj.updatePending" required readonly  outline></v-text-field>
               </v-flex>
               <v-flex xs12>
-                <v-text-field label="Naujas įrenginio ID" :value = "deviceObj.pendingDeviceId"></v-text-field>
+                <v-text-field label="Naujas įrenginio ID*" :value = "deviceObj.pendingDeviceId"></v-text-field>
               </v-flex>
               <v-flex xs12>
                 <v-select
-                  label="Auditorija"
+                  label="Auditorija*"
                   :items="classrooms"
                   name="classroomId"
-                  item-text="classLabel"
+                  :item-text="textProps"
+                  :value="classrooms[deviceObj.classroomId]"
                   required
                 ></v-select>
               </v-flex>
@@ -62,7 +63,7 @@
   export default {
     name: 'EditDevice',
     props: {
-      deviceObj: Device,
+      deviceObj: Object,
     },
     data: () => ({
       classrooms: [],
@@ -87,6 +88,9 @@
         return label + " " + location
       }
       
+    },
+    methods: {
+      textProps: item => item.classLocation + ' r.-' + item.classLabel
     }
 }
 </script>
