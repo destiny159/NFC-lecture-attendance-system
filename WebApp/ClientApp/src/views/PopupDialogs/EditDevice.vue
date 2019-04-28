@@ -29,7 +29,7 @@
                 <v-text-field label="Laukiama atnaujinimo" :value = "deviceObj.updatePending" required readonly  outline></v-text-field>
               </v-flex>
               <v-flex xs12>
-                <v-text-field v-model="deviceObj.pendingDeviceId" label="Naujas įrenginio ID*" :value = "deviceObj.pendingDeviceId"></v-text-field>
+                <v-text-field v-model.number="deviceObj.pendingDeviceId" label="Naujas įrenginio ID*" :value = "deviceObj.pendingDeviceId"></v-text-field>
               </v-flex>
               <v-flex xs12>
                 <v-select
@@ -38,9 +38,11 @@
                   :items="classrooms"
                   name="classroom"
                   :item-text="textProps"
-                  :value = "classrooms[getClass(deviceObj.classroomId)]"
                   required
-                ></v-select>
+                  return-object
+                >
+                  
+                </v-select>
               </v-flex>
             </v-layout>
           </v-container>
@@ -67,20 +69,24 @@
       deviceObj: Object,
     },
     data: () => ({
+      idx: null,
       classrooms: [],
       classroom: null,
       dialog: false
     }),
     created () {
-       const headers = {...authHeader()};
+      const headers = {...authHeader()};
       axios.get(`api/lectures/getclassrooms`)
       .then(response => {
         // JSON responses are automatically parsed.
         this.classrooms = response.data;
         console.log(this.classrooms)
         // console.log(this.$props.deviceObj.classroomId);
+        this.idx =  findWithAttr(this.classrooms, 'classroomId', this.$props.deviceObj.classroomId);
+        this.classroom = this.classrooms[this.idx];
+        console.log(this.classroom);
+        console.log(this.idx);
       });
-    
     },
     computed: {
       getClassrooms () {
@@ -95,8 +101,15 @@
     },
     methods: {
       submit(){
-          
+          this.$props.deviceObj.classroomId = this.classroom.classroomId;
+          this.$props.deviceObj
           console.log(this.$props.deviceObj);
+          const headers = {...authHeader()};
+          axios.post('api/nfcscan/postdevice/', this.$props.deviceObj, {headers:headers})
+          .then((response) => {
+            this.scans = response.data;
+            this.loading = false;
+          });
           this.dialog = false;
       },
       getClass(id)
@@ -106,9 +119,9 @@
         console.log(idx)
         console.log(this.classrooms[idx]);
         var classss = this.classrooms[idx];
-        this.classroom = classss.classroomId + ' - ' + classss.classLocation + ' r.-' + classss.classLabel;
-        console.log(this.classrooms[idx]);
-        console.log(this.classroom);
+        //this.classroom = classss.classroomId + ' - ' + classss.classLocation + ' r.-' + classss.classLabel;
+        // console.log(this.classrooms[idx]);
+        // console.log(this.classroom);
         //this.classroom = this.classrooms[idx]
         return idx;
       },
@@ -118,9 +131,9 @@
 }
 
 function getTextProps(item)
-      {
-        return item.classroomId + ' - ' + item.classLocation + ' r.-' + item.classLabel;
-      }
+{
+  return item.classroomId + ' - ' + item.classLocation + ' r.-' + item.classLabel;
+}
 
 function findWithAttr(array, attr, value) {
     for(var i = 0; i < array.length; i += 1) {
