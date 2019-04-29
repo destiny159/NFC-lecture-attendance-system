@@ -28,6 +28,7 @@ import {
   VChip,
 } from 'vuetify'
 import 'vuetify/src/stylus/app.styl'
+import lt from './lt-locale'
 
 Vue.use(Vuetify, {
   components: {
@@ -65,5 +66,8 @@ Vue.use(Vuetify, {
     info: '#2196F3',
     success: '#4CAF50',
     warning: '#FFC107'
+  },
+  lang: {
+    locales: { lt }
   },
 })

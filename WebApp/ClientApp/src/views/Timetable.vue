@@ -37,7 +37,7 @@
       <v-select
         v-model="type"
         :items="typeOptions"
-        label="Type"
+        label="Kalendoriaus tipas"
       ></v-select>
       <v-menu
         ref="startMenu"
@@ -54,7 +54,7 @@
         <template v-slot:activator="{ on }">
           <v-text-field
             v-model="start"
-            label="Start Date"
+            label="Data"
             prepend-icon="event"
             readonly
             v-on="on"
@@ -62,6 +62,7 @@
         </template>
         <v-date-picker
           v-model="start"
+          locale="lt"
           no-title
           scrollable
         >
@@ -157,7 +158,7 @@
       <v-select
         v-model="weekdays"
         :items="weekdaysOptions"
-        label="Weekdays"
+        label="Dienų intervalai"
       ></v-select>
       <v-text-field
         v-if="type === 'custom-weekly'"
@@ -179,6 +180,7 @@
     >
       <v-sheet height="85vh">
         <v-calendar
+          locale="lt"
           ref="calendar"
           v-model="start"
           :type="type"
@@ -202,11 +204,18 @@
               <!-- timed events -->
               <div
                 :key="event.key"
-                :style="{ top: timeToY(event.start.substring(11,16)) + 'px', height: minutesToPixels(event.lectureDuration) + 'px', color: 'black', backgroundColor: event.color, borderColor: event.color }"
+                :style="{ top: timeToY(event.start.substring(11,16)) + 'px', height: minutesToPixels(event.lectureDuration) + 'px', color: 'black', backgroundColor: event.colorTimed, borderColor: event.colorTimed}"
                 class="my-eventTime with-time"
-                v-html="event.title"
                 @click="open(event)"
               >
+                <div v-if="event.isVisited">
+                  <v-icon color="green darken-2">check_circle_outline</v-icon>
+                  {{event.title}}
+                </div>
+                <div v-if="!event.isVisited">
+                  <v-icon color="red darken-2">highlight_off</v-icon>
+                  {{event.title}}
+                </div>
               </div>
             </template>
           </template>
@@ -223,9 +232,18 @@
                       <template v-slot:activator="{ on }">
                         <div
                           class="my-event"
-                          v-on="on"
-                          v-html="event.title"
-                        ></div>
+                          style="margin-bottom: 2px"
+                          v-on="on"                             
+                        >
+                          <div v-if="!event.isVisited">
+                            <v-icon color="red darken-2">highlight_off</v-icon>
+                            {{event.title}}
+                          </div>
+                          <div v-if="event.isVisited">
+                            <v-icon color="green darken-2">check_circle_outline</v-icon>
+                            {{event.title}}
+                          </div>
+                        </div>
                       </template>
                       <v-card
                         color="grey lighten-4"
@@ -305,14 +323,14 @@
       now: null,
       type: 'month',
       typeOptions: [
-        { text: 'Day', value: 'day' },
-        { text: 'Week', value: 'week' },
-        { text: 'Month', value: 'month' },
+        { text: 'Dieninis', value: 'day' },
+        { text: 'Savaitinis', value: 'week' },
+        { text: 'Mėnesinis', value: 'month' },
       ],
       weekdays: weekdaysDefault,
       weekdaysOptions: [
-        { text: 'Mon - Fri', value: [1, 2, 3, 4, 5] },
-        { text: 'Mon - Sun', value: [1, 2, 3, 4, 5, 6, 0] }
+        { text: 'Pr - Pn', value: [1, 2, 3, 4, 5] },
+        { text: 'Pr - Sk', value: [1, 2, 3, 4, 5, 6, 0] }
       ],
       intervals: intervalsDefault,
       intervalsOptions: [
@@ -362,7 +380,6 @@
       }
     },
     created () {
-      // In the url instead of 1 should be student id
       const userData = JSON.parse(localStorage.getItem("user"));
       const userId =  userData.userName.id;
       axios.get(`api/lectures/${userId}`)
@@ -373,11 +390,14 @@
           element.key = Math.random();
           element.date = element.start.substring(0,10);
           if (element.details.includes('Teori')) {
-            element.color = 'red'
-          } else if (element.details.includes('Prakti')) {
-            element.color = 'blue'
+            element.color = 'red lighten-3'
+            element.colorTimed = '#EF9A9A';
+          } else if (element.details.includes('Labor')) {
+            element.color = 'green lighten-3';
+            element.colorTimed = '#A5D6A7';
           } else {
-            element.color = 'green'
+            element.color = 'blue lighten-3'
+            element.colorTimed = '#90CAF9';
           }
           element.lectureDuration = Math.floor((Math.abs(new Date(element.start) - new Date(element.finish))/1000)/60);
           element.open = false;
@@ -456,9 +476,7 @@
     text-overflow: ellipsis;
     white-space: nowrap;
     border-radius: 2px;
-    background-color: #1867c0;
     color: #ffffff;
-    border: 1px solid #1867c0;
     font-size: 12px;
     padding: 3px;
     cursor: pointer;
