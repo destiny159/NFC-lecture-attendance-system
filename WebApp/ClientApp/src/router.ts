@@ -20,6 +20,11 @@ export const router = new Router({
       component: LoginPage,
     },
     {
+      path: '/device-fetch',
+      name: 'device-fetch',
+      component: () => import(/* webpackChunkName: "fetch-data" */ './views/DeviceFetch.vue'),
+    },
+    {
       path: '/fetch-data',
       name: 'fetch-data',
       component: () => import(/* webpackChunkName: "fetch-data" */ './views/FetchData.vue'),
@@ -38,11 +43,6 @@ export const router = new Router({
       path: '/timetable',
       name: 'timetable',
       component: () => import(/* webpackChunkName: "fetch-data" */ './views/Timetable.vue'),
-    },
-    {
-      path: '/login',
-      name: 'login',
-      component: () => import(/* webpackChunkName: "fetch-data" */ './views/LoginMock.vue'),
     },
     {
       path: '*',

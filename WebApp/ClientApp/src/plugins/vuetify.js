@@ -23,6 +23,9 @@ import {
   VDatePicker,
   VMenu,
   VSelect,
+  VAutocomplete,
+  VAvatar,
+  VChip,
 } from 'vuetify'
 import 'vuetify/src/stylus/app.styl'
 
@@ -50,6 +53,9 @@ Vue.use(Vuetify, {
     VMenu,
     VDatePicker,
     VSheet,
+    VAutocomplete,
+    VAvatar,
+    VChip,
   },
   theme: {
     primary: '#1976D2',

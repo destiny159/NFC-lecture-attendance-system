@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Net;
+using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -21,9 +23,11 @@ namespace NFCSystem.Controllers
             _context = context;
         }
 
+
+
         // GET api/lectures/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<List<Lecture>>> Get(string id)
+        public ActionResult<List<Lecture>> Get(string id)
         {
             var timetable = _context.Timetables.Where(x => x.StudentId == id).ToList();
 
@@ -50,6 +54,16 @@ namespace NFCSystem.Controllers
             }
 
             return lectures;
+        }
+
+
+        // GET api/lectures/getclassrooms
+        // Gets all classroms available currently
+        [HttpGet("[action]")]
+        public async Task<ActionResult<List<Classroom>>> GetClassrooms()
+        {
+            var classrooms = await _context.Classrooms.ToListAsync();
+            return classrooms;
         }
     }
 }

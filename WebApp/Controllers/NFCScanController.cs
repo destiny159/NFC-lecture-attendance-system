@@ -23,6 +23,7 @@ namespace NFCSystem.Controllers
             _context = context;
         }
 
+
         // GET: api/Todo
         [HttpGet("[action]")]
         [Authorize]
@@ -31,19 +32,40 @@ namespace NFCSystem.Controllers
             return await _context.NFCScans.ToListAsync();
         }
 
+
         // GET: api/Todo/5
         [HttpGet("[action]/{id}")]
         public async Task<ActionResult<NFCScan>> GetScan(long id)
         {
-        var todoItem = await _context.NFCScans.FindAsync(id);
-        //var student = await _context.Users.FirstOrDefaultAsync(x => x.UID == todoItem.UID);
-        var restult = new {scan = todoItem/* , stud = student*/};
-        if (todoItem == null)
-        {
-            return NotFound();
+            var todoItem = await _context.NFCScans.FindAsync(id);
+            //var student = await _context.Users.FirstOrDefaultAsync(x => x.UID == todoItem.UID);
+            var restult = new {scan = todoItem/* , stud = student*/};
+            if (todoItem == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(restult);
         }
 
-        return Ok(restult);
+
+        // POST: api/nfcscan/postscan
+        // Posts scan to server database
+        [HttpPost("[action]")]
+        public async Task<ActionResult<NFCScan>> PostScan(NFCScan item)
+        {       
+            _context.NFCScans.Add(item);
+            await _context.SaveChangesAsync();
+            //System.Diagnostics.Debug.WriteLine(item.ToString());
+
+            return CreatedAtAction(nameof(GetScan), new { id = item.ScanId }, item);
+        }
+
+        // GET: api/Todo
+        [HttpGet("[action]")]
+        public async Task<ActionResult<IEnumerable<Device>>> GetDevices()
+        {
+            return await _context.Devices.ToListAsync();
         }
 
         // GET: api/nfcscan/getdeviceid/x
@@ -60,6 +82,7 @@ namespace NFCSystem.Controllers
             return Ok(device);
         }
 
+
         // POST: api/nfcscan/postscan
         // Posts scan to server database
         [HttpPost("[action]")]
@@ -70,18 +93,6 @@ namespace NFCSystem.Controllers
             //System.Diagnostics.Debug.WriteLine(item.ToString());
 
             return CreatedAtAction(nameof(GetScan), new { id = item.DeviceIdReal }, item);
-        }  
-
-        // POST: api/nfcscan/postscan
-        // Posts scan to server database
-        [HttpPost("[action]")]
-        public async Task<ActionResult<NFCScan>> PostScan(NFCScan item)
-        {       
-            _context.NFCScans.Add(item);
-            await _context.SaveChangesAsync();
-            //System.Diagnostics.Debug.WriteLine(item.ToString());
-
-            return CreatedAtAction(nameof(GetScan), new { id = item.ScanId }, item);
-        }   
+        }     
     }
 }
