@@ -160,6 +160,25 @@
         :items="weekdaysOptions"
         label="Dienų intervalai"
       ></v-select>
+      <v-tooltip bottom>
+          <template v-slot:activator="{ on }">
+            <div v-on="on">
+            <v-autocomplete
+              v-if="isAdminOrLecturer"
+              v-model="select"              
+              :loading="loading"
+              :items="items"
+              :search-input.sync="search"
+              cache-items
+              flat
+              hide-no-data
+              hide-details
+              label="Įveskite studento VIDKO arba vardą ir pavardę"
+            ></v-autocomplete> 
+            </div>             
+          </template>
+        <span>Įveskite studento VIDKO arba vardą ir pavardę</span>
+      </v-tooltip>
       <v-text-field
         v-if="type === 'custom-weekly'"
         v-model="minWeeks"
@@ -357,7 +376,12 @@
         { text: 'Blue', value: 'blue' },       
         { text: 'Green', value: 'green' },        
       ],
-      events: []
+      events: [],
+      loading: false,
+      items: [],
+      search: null,
+      select: null,
+      isAdminOrLecturer: false
     }),
     computed: {
       intervalStyle () {
@@ -381,38 +405,72 @@
     },
     created () {
       const userData = JSON.parse(localStorage.getItem("user"));
-      const userId =  userData.userName.id;
-      axios.get(`api/lectures/${userId}`)
-      .then(response => {
-        // JSON responses are automatically parsed.
-        this.events = response.data
-        this.events.forEach(element => {
-          element.key = Math.random();
-          element.date = element.start.substring(0,10);
-          if (element.details.includes('Teori')) {
-            element.color = 'red lighten-3'
-            element.colorTimed = '#EF9A9A';
-          } else if (element.details.includes('Labor')) {
-            element.color = 'green lighten-3';
-            element.colorTimed = '#A5D6A7';
-          } else {
-            element.color = 'blue lighten-3'
-            element.colorTimed = '#90CAF9';
-          }
-          element.lectureDuration = Math.floor((Math.abs(new Date(element.start) - new Date(element.finish))/1000)/60);
-          element.open = false;
-        });
-      })
-      .catch(e => {
-        this.errors.push(e)
-      })
+      const userId =  userData.userName.id;      
+      this.fetchLectures(`api/lectures/${userId}`);
+      
+      if(userData.role.roleId == 'ADMIN' || userData.role.roleId == 'LECTURER') {
+        this.isAdminOrLecturer = true;
+      }
    },
+   watch: {
+      search (val) {
+        val && val !== this.select && this.querySelections(val);
+
+        if(this.select !== null) {
+          //if student is selected, gets his VIDKO code from input
+          const studentCode = this.select.substring(0, this.select.indexOf(" "));
+          //then gets his id, by his VIDKO code
+          axios.get(`api/userlist/getuserid/${studentCode}`)
+            .then(response => {
+              //and finally gets his lectures
+              this.fetchLectures(`api/lectures/${response.data}`);
+            });
+        }
+      }
+    },
     methods: {
       showIntervalLabel (interval) {
         return interval.minute === 0
       },
       open (event) {
-
+        //Should show lecture detailed lecture data in weekly/daily calendar
+      },
+      querySelections (v) {
+        this.loading = true
+        axios.get(`api/userlist/getusers`)
+        .then(response => {
+          const users = response.data
+          users.forEach(element => {
+            this.items.push(element.studentCode + " - " + element.name + " " + element.surname)
+          })
+          this.loading = false
+        })
+      },
+      fetchLectures(serviceUrl) {
+        axios.get(serviceUrl)
+        .then(response => {
+          // JSON responses are automatically parsed.
+          this.events = response.data
+          this.events.forEach(element => {
+            element.key = Math.random();
+            element.date = element.start.substring(0,10);
+            if (element.details.includes('Teori')) {
+              element.color = 'red lighten-3'
+              element.colorTimed = '#EF9A9A';
+            } else if (element.details.includes('Labor')) {
+              element.color = 'green lighten-3';
+              element.colorTimed = '#A5D6A7';
+            } else {
+              element.color = 'blue lighten-3'
+              element.colorTimed = '#90CAF9';
+            }
+            element.lectureDuration = Math.floor((Math.abs(new Date(element.start) - new Date(element.finish))/1000)/60);
+            element.open = false;
+          });
+        })
+        .catch(e => {
+          this.errors.push(e)
+        })
       }
     }
   }
