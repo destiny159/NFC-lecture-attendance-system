@@ -69,8 +69,8 @@ export default class App extends Vue {
   private miniVariant: boolean = false;
   private right: boolean = true;
   private title: string = 'NFC lankomumo sistema';
-  private userElement: string = JSON.parse(localStorage.getItem('user') || '{}');
-  private role: String = JSON.parse(localStorage.getItem('user') || '{}')['role']['roleId'];
+  // private userElement: string = JSON.parse(localStorage.getItem('user') || '{}');
+  // private role: string = JSON.parse(localStorage.getItem('user') || '{}')['role']['roleId'];
   private renderComponent: boolean =  true;
 
   private itemsStudent = [
@@ -97,51 +97,55 @@ export default class App extends Vue {
     { title: 'Statistika', icon: 'timeline', link: '/statistics' },
   ];
 
-  myRole()
+  private myRole()
   {
-    var myRoleString = "";
-    if(this.role == 'STUDENT')
+    const currentRole = JSON.parse(localStorage.getItem('user') || '{}')['role']['roleId'];
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    let myRoleString = '';
+    if(currentRole === 'STUDENT')
     {
       myRoleString += 'Studentas';
     }
-    if(this.role == 'ADMIN')
+    if(currentRole === 'ADMIN')
     {
       myRoleString += 'Administratorius';
     }
-    if(this.role == 'LECTURER')
+    if(currentRole === 'LECTURER')
     {
       myRoleString += 'Dėstytojas';
     }
-    myRoleString += ': '
-    myRoleString += this.userElement['userName']['name'] + ' ' + this.userElement['userName']['surname'];
+    myRoleString += ': ';
+    myRoleString += user['userName']['name'] + ' ' + user['userName']['surname'];
     return myRoleString;
   }
 
-  get items(){
-    console.log("Role is:");
-    console.log(this.role)
-    if(this.role == "STUDENT")
+
+  private get items(){
+    const currentRole = JSON.parse(localStorage.getItem('user') || '{}')['role']['roleId'];
+    console.log('Role is:');
+    console.log(currentRole);
+    if(currentRole === 'STUDENT') 
     {
       return this.itemsStudent;
     }
-    if(this.role == "ADMIN")
+    if(currentRole === 'ADMIN')
     {
       return this.itemsAdmin;
     }
-    if(this.role == "LECTURER")
+    if(currentRole === 'LECTURER')
     {
       return this.itemsLecturer;
     }
   }
 
-  logout()
+  private logout()
   {
-    console.log("Pressed logout");
+    console.log('Pressed logout');
     userService.logout();
     router.push('/');
   }
 
-  logState()
+  private logState()
   {
     this.$forceUpdate();
     // console.log(this.sss.userName.email);
@@ -154,9 +158,9 @@ export default class App extends Vue {
   }
 
 
-  isLoggedIn()
+  private isLoggedIn()
   {
-    return localStorage.getItem("user");
+    return localStorage.getItem('user');
   }
 }
 
