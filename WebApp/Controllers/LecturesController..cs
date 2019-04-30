@@ -23,8 +23,6 @@ namespace NFCSystem.Controllers
             _context = context;
         }
 
-
-
         // GET api/lectures/5
         [HttpGet("{id}")]
         public ActionResult<List<Lecture>> Get(string id)
@@ -49,10 +47,10 @@ namespace NFCSystem.Controllers
                         lecture.LectureType + "<br>" + _context.Classrooms.FirstOrDefault(x => x.ClassroomId == lecture.ClassroomId).ClassLocation + " r.-" + 
                         _context.Classrooms.FirstOrDefault(x => x.ClassroomId == lecture.ClassroomId).ClassLabel,
                     Start = Convert.ToDateTime(lecture.Date.ToString("yyyy-MM-dd") + "T" + _context.Periods.FirstOrDefault(x => x.PeriodId == lecture.PeriodId).PeriodStartTime),
-                    Finish =Convert.ToDateTime(lecture.Date.ToString("yyyy-MM-dd") + "T" + _context.Periods.FirstOrDefault(x => x.PeriodId == lecture.PeriodId).PeriodEndTime),
+                    Finish = Convert.ToDateTime(lecture.Date.ToString("yyyy-MM-dd") + "T" + _context.Periods.FirstOrDefault(x => x.PeriodId == lecture.PeriodId).PeriodEndTime),
+                    IsVisited = lecture.isVisited, 
                 });
             }
-
             return lectures;
         }
 
